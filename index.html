@@ -1,0 +1,701 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>SCX Mix da Construção</title>
+<meta name="description" content="SCX Mix da Construção — materiais de construção e utilidades em Campo Grande - MS. Ofertas, orçamento pelo WhatsApp e entrega rápida.">
+<meta property="og:title" content="SCX Mix da Construção">
+<meta property="og:description" content="Materiais de construção e utilidades. Peça seu orçamento pelo WhatsApp.">
+<meta property="og:image" content="https://www.scxmix.com.br/assets/logo.png">
+<meta property="og:url" content="https://www.scxmix.com.br/">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="pt_BR">
+<link rel="canonical" href="https://www.scxmix.com.br/">
+<meta name="theme-color" content="#2e3192">
+<link rel="icon" href="assets/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,500..900&family=Barlow:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: faixa de avisos + cabeçalho azul fixo, banner rotativo, vitrine em grade, orçamento lateral (futuro carrinho) */
+:root{
+  --azul:#2e3192; --amarelo:#ffe814;
+  --azul-esc:color-mix(in srgb,var(--azul) 68%,#000); --amarelo-esc:color-mix(in srgb,var(--amarelo) 88%,#000);
+  --azul-claro:color-mix(in srgb,var(--azul) 11%,#fff);
+  --bg:#f4f5fa; --card:#ffffff; --fg:#191a33; --muted:#5d6080; --linha:#dcdeec; --icone:var(--azul);
+  --verde:#1e9e57; --vermelho:#d0312d;
+  --display:"Archivo",system-ui,sans-serif;
+  --body:"Barlow",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#10112a; --card:#1a1c3d; --fg:#eef0ff; --muted:#a6a9cc; --linha:#2d3060; --azul-claro:color-mix(in srgb,var(--azul) 45%,#10112a); --icone:var(--amarelo); color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#10112a; --card:#1a1c3d; --fg:#eef0ff; --muted:#a6a9cc; --linha:#2d3060; --azul-claro:color-mix(in srgb,var(--azul) 45%,#10112a); --icone:var(--amarelo); color-scheme:dark}
+
+*{box-sizing:border-box}
+html{scroll-padding-top:150px}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--body);font-size:16px;line-height:1.5;padding-top:env(safe-area-inset-top,0px)}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:60;background:var(--azul-esc)}
+img{max-width:100%}
+[hidden]{display:none!important}
+a{color:inherit}
+button{font:inherit;cursor:pointer}
+input,textarea{font:inherit}
+:focus-visible{outline:3px solid var(--amarelo);outline-offset:2px}
+.wrap{max-width:1200px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2,h3{font-family:var(--display);font-stretch:112%;line-height:1.05;text-wrap:balance;margin:0}
+.num{font-variant-numeric:tabular-nums}
+
+/* carregando */
+.carregando main{opacity:.0}
+.carregando .loader{display:grid}
+.loader{display:none;position:fixed;inset:0;place-items:center;z-index:40;pointer-events:none}
+.loader span{width:44px;height:44px;border-radius:50%;border:5px solid var(--linha);border-top-color:var(--azul);animation:gira .8s linear infinite}
+@keyframes gira{to{transform:rotate(1turn)}}
+
+/* faixa de avisos */
+.ticker{background:var(--amarelo);color:var(--azul-esc);font-weight:700;font-size:14px;overflow:hidden;white-space:nowrap}
+.ticker .track{display:inline-flex;gap:48px;padding-block:7px;animation:rolar 32s linear infinite}
+.ticker span::before{content:"■";margin-right:10px;font-size:9px;vertical-align:2px}
+@keyframes rolar{to{transform:translateX(-50%)}}
+
+/* cabeçalho */
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;background:var(--azul);color:#fff;box-shadow:0 2px 0 var(--azul-esc)}
+.hd{display:flex;align-items:center;gap:20px;padding-block:10px}
+.logo img{height:56px;width:auto;display:block}
+.busca{flex:1;display:flex;background:#fff;border-radius:6px;overflow:hidden;min-width:0}
+.busca input{flex:1;border:0;padding:11px 14px;color:#191a33;min-width:0;background:#fff}
+.busca input:focus{outline:none}
+.busca button{border:0;background:var(--amarelo);color:var(--azul-esc);padding:0 16px;font-weight:700}
+.btn-orc{display:flex;align-items:center;gap:8px;background:transparent;border:2px solid var(--amarelo);color:#fff;border-radius:6px;padding:8px 14px;font-weight:700;white-space:nowrap}
+.btn-orc .qt{background:var(--amarelo);color:var(--azul-esc);border-radius:99px;min-width:24px;padding:0 6px;font-size:13px;line-height:24px;text-align:center}
+nav.cats{background:var(--azul-esc)}
+nav.cats .wrap{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none}
+nav.cats button{background:none;border:0;color:#d7d9ff;padding:10px 12px;font-weight:600;font-size:14px;white-space:nowrap;border-bottom:3px solid transparent}
+nav.cats button:hover,nav.cats button.on{color:#fff;border-bottom-color:var(--amarelo)}
+
+/* banner rotativo */
+.hero{padding-block:20px 8px}
+.slides{position:relative;border-radius:12px;overflow:hidden;aspect-ratio:1600/500;max-width:100%;min-height:240px;background:var(--azul)}
+.slide{position:absolute;inset:0;display:grid;grid-template-columns:1.2fr 1fr;align-items:center;padding:28px clamp(20px,5vw,64px);color:#fff;opacity:0;transition:opacity .6s;pointer-events:none;background-size:cover;background-position:center}
+.slide.on{opacity:1;pointer-events:auto}
+.slide .eyebrow{display:inline-block;background:var(--amarelo);color:var(--azul-esc);font-weight:800;font-size:13px;letter-spacing:.08em;text-transform:uppercase;padding:4px 10px;border-radius:3px;margin-bottom:12px}
+.slide h2{font-size:clamp(24px,4.2vw,52px);font-weight:900}
+.slide h2 em{font-style:normal;color:var(--amarelo)}
+.slide p{margin:10px 0 18px;max-width:42ch;color:#e4e6ff;font-size:clamp(14px,1.6vw,18px)}
+.slide .cta{display:inline-block;background:var(--amarelo);color:var(--azul-esc);font-weight:800;text-decoration:none;border:0;padding:12px 20px;border-radius:6px}
+.slide .preco-big{justify-self:center;text-align:center;font-family:var(--display);font-weight:900;font-stretch:125%}
+.preco-big small{display:block;font-size:clamp(13px,1.4vw,16px);font-weight:600;font-family:var(--body);color:#e4e6ff}
+.preco-big b{display:block;font-size:clamp(44px,8vw,104px);color:var(--amarelo);line-height:1}
+.preco-big i{font-style:normal;font-size:.35em;vertical-align:top;margin-right:4px}
+.s1{background-image:linear-gradient(115deg,var(--azul) 55%,var(--azul-esc) 55%)}
+.s2{background-image:linear-gradient(115deg,var(--azul-esc) 0 50%,var(--azul) 50%)}
+.s3{background-image:repeating-linear-gradient(135deg,var(--azul) 0 40px,color-mix(in srgb,var(--azul) 88%,#fff) 40px 80px)}
+.slide.com-foto::before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(15,16,50,.88) 0%,rgba(15,16,50,.55) 55%,rgba(15,16,50,.1) 100%);z-index:-1}
+.slide.com-foto{z-index:0;isolation:isolate}
+.slide.arte{padding:0;display:block;cursor:pointer}
+.slide.arte img{width:100%;height:100%;object-fit:cover;display:block}
+.dots{position:absolute;bottom:14px;left:50%;transform:translateX(-50%);display:flex;gap:8px;z-index:2}
+.dots button{width:28px;height:6px;border-radius:3px;border:0;background:rgba(255,255,255,.45);padding:0}
+.dots button.on{background:var(--amarelo)}
+.seta{position:absolute;top:50%;transform:translateY(-50%);z-index:2;width:38px;height:38px;border-radius:50%;border:0;background:rgba(0,0,0,.28);color:#fff;font-size:20px}
+.seta.l{left:10px}.seta.r{right:10px}
+
+/* vantagens */
+.vant{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;padding-block:12px}
+.vant div{display:flex;gap:12px;align-items:center;background:var(--card);border:1px solid var(--linha);border-radius:8px;padding:12px 14px}
+.vant svg{flex:none;width:30px;height:30px;color:var(--icone)}
+.vant p{margin:0}
+.vant b{display:block;font-size:15px}
+.vant span{font-size:13px;color:var(--muted)}
+
+section{padding-block:28px}
+.sec-h{display:flex;align-items:end;justify-content:space-between;gap:16px;margin-bottom:16px;flex-wrap:wrap}
+.sec-h h2{font-size:clamp(24px,3vw,32px);font-weight:900}
+.sec-h h2::after{content:"";display:block;width:56px;height:5px;background:var(--amarelo);margin-top:8px}
+.sec-h p{margin:0;color:var(--muted)}
+
+/* categorias */
+.cat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(128px,1fr));gap:12px}
+.cat{background:var(--card);border:1px solid var(--linha);border-radius:10px;padding:16px 8px;text-align:center;font-weight:700;font-size:14px;color:var(--fg);transition:transform .15s,border-color .15s}
+.cat:hover{transform:translateY(-2px);border-color:var(--azul)}
+.cat .ic{width:56px;height:56px;margin:0 auto 8px;border-radius:50%;background:var(--azul-claro);display:grid;place-items:center;color:var(--icone)}
+.cat svg{width:30px;height:30px}
+
+/* produtos */
+.filtros{display:flex;gap:8px;flex-wrap:wrap}
+.chip{border:1px solid var(--linha);background:var(--card);color:var(--fg);border-radius:99px;padding:6px 14px;font-size:14px;font-weight:600}
+.chip.on{background:var(--azul);border-color:var(--azul);color:#fff}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px}
+.prod{background:var(--card);border:1px solid var(--linha);border-radius:10px;overflow:hidden;display:flex;flex-direction:column}
+.prod .foto{position:relative;aspect-ratio:4/3;max-width:100%;background:var(--azul-claro);display:grid;place-items:center;color:var(--icone);border:0;padding:0;width:100%}
+.prod .foto svg{width:38%;height:auto;opacity:.85}
+.prod .foto img{width:100%;height:100%;object-fit:cover;display:block}
+.selo{position:absolute;top:10px;left:10px;background:var(--vermelho);color:#fff;font-weight:800;font-size:13px;padding:3px 8px;border-radius:4px}
+.prod .info{padding:12px 14px 14px;display:flex;flex-direction:column;gap:4px;flex:1}
+.prod .tag{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.prod h3{font-family:var(--body);font-stretch:100%;font-size:16px;font-weight:600;line-height:1.3;flex:1}
+.prod h3 button{all:unset;cursor:pointer}
+.prod h3 button:hover{text-decoration:underline}
+.de{font-size:13px;color:var(--muted);text-decoration:line-through;min-height:19px}
+.por{font-family:var(--display);font-stretch:110%;font-weight:900;font-size:26px;color:var(--fg);line-height:1}
+.por small{font-family:var(--body);font-size:13px;font-weight:500;color:var(--muted)}
+.pix{font-size:13px;color:var(--verde);font-weight:600}
+.add{margin-top:8px;border:0;background:var(--amarelo);color:var(--azul-esc);font-weight:800;border-radius:6px;padding:10px}
+.add:hover{background:var(--amarelo-esc)}
+.add.ok{background:var(--verde);color:#fff}
+.vazio{grid-column:1/-1;text-align:center;color:var(--muted);padding:40px 0}
+.nota{font-size:13px;color:var(--muted);margin-top:12px}
+
+/* anúncios */
+.ads{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.ad{border-radius:12px;padding:26px 28px;display:flex;flex-direction:column;gap:8px;min-height:170px;justify-content:center}
+.ad h3{font-size:clamp(22px,2.6vw,30px);font-weight:900}
+.ad p{margin:0;max-width:40ch}
+.ad.a1{background:var(--amarelo);color:var(--azul-esc)}
+.ad.a2{background:var(--azul);color:#fff}
+
+/* contato */
+.contato{display:grid;grid-template-columns:1fr 1.2fr;gap:28px;background:var(--card);border:1px solid var(--linha);border-radius:14px;padding:clamp(20px,4vw,36px)}
+.contato h2{font-size:clamp(24px,3vw,32px);font-weight:900}
+.contato .txt p{color:var(--muted);max-width:42ch}
+.contato .tel{font-family:var(--display);font-weight:900;font-size:24px;color:var(--fg);user-select:all}
+.form{display:grid;gap:12px}
+.form .lin{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.campo{display:flex;flex-direction:column;gap:4px;min-width:0}
+.campo label{font-size:14px;font-weight:600}
+.campo input,.campo textarea{border:1px solid var(--linha);background:var(--bg);color:var(--fg);border-radius:6px;padding:10px 12px;width:100%}
+.campo textarea{min-height:110px;resize:vertical}
+.campo input:focus,.campo textarea:focus{outline:2px solid var(--azul);outline-offset:0;border-color:var(--azul)}
+.erro{color:var(--vermelho);font-size:14px;font-weight:600;margin:0}
+.sucesso{background:color-mix(in srgb,var(--verde) 14%,var(--card));border:1px solid var(--verde);color:var(--fg);border-radius:8px;padding:12px 14px;font-size:15px}
+.btn-zap{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:#25d366;color:#0b3d1f;font-weight:800;text-decoration:none;padding:12px 18px;border-radius:6px;border:0}
+.btn-zap:disabled{opacity:.6;cursor:wait}
+
+/* passos */
+.passos{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;counter-reset:p}
+.passo{background:var(--card);border:1px solid var(--linha);border-radius:10px;padding:20px}
+.passo::before{counter-increment:p;content:counter(p);display:grid;place-items:center;width:38px;height:38px;border-radius:50%;background:var(--azul);color:var(--amarelo);font-family:var(--display);font-weight:900;font-size:18px;margin-bottom:10px}
+.passo b{display:block;font-size:17px;margin-bottom:4px}
+.passo span{color:var(--muted);font-size:15px}
+
+/* rodapé */
+footer{background:var(--azul-esc);color:#d7d9ff;margin-top:24px;padding-bottom:env(safe-area-inset-bottom,0px)}
+.ft{display:grid;grid-template-columns:1.3fr 1fr 1fr;gap:28px;padding-block:36px 24px}
+footer h4{color:#fff;font-family:var(--display);font-stretch:112%;margin:0 0 10px;font-size:16px}
+footer p{margin:0 0 6px;font-size:15px}
+footer .flogo{height:70px;width:auto}
+footer a{color:#fff}
+.cred{border-top:1px solid rgba(255,255,255,.12);padding-block:14px;font-size:13px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.cred a{text-decoration:none;color:#d7d9ff}
+
+/* botão flutuante WhatsApp */
+.zap-flut{position:fixed;right:calc(18px + env(safe-area-inset-right,0px));bottom:calc(18px + env(safe-area-inset-bottom,0px));z-index:45;width:58px;height:58px;border-radius:50%;background:#25d366;display:grid;place-items:center;box-shadow:0 6px 18px rgba(0,0,0,.25)}
+.zap-flut svg{width:32px;height:32px;fill:#fff}
+
+/* gaveta e modal */
+.veu{position:fixed;inset:0;background:rgba(10,10,30,.55);z-index:70;opacity:0;pointer-events:none;transition:opacity .25s}
+.veu.on{opacity:1;pointer-events:auto}
+aside.orc{position:fixed;top:0;right:0;bottom:0;width:min(440px,100%);background:var(--card);color:var(--fg);z-index:80;transform:translateX(105%);transition:transform .28s;display:flex;flex-direction:column;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);padding-right:env(safe-area-inset-right,0px)}
+aside.orc.on{transform:none}
+.orc-h{display:flex;justify-content:space-between;align-items:center;padding:16px 18px;background:var(--azul);color:#fff}
+.orc-h h3{font-size:20px}
+.fechar{background:none;border:0;color:inherit;font-size:28px;line-height:1;padding:0 4px}
+.orc-corpo{flex:1;overflow:auto;padding:8px 18px 18px;display:flex;flex-direction:column;gap:14px}
+.it{display:grid;grid-template-columns:1fr auto;gap:4px 10px;padding:12px 0;border-bottom:1px solid var(--linha)}
+.it b{font-weight:600;font-size:15px}
+.it .sub{grid-column:2;grid-row:1;font-weight:700}
+.qtd{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.qtd button{width:30px;height:30px;border-radius:5px;border:1px solid var(--linha);background:var(--bg);color:var(--fg);font-weight:700}
+.qtd span{min-width:24px;text-align:center}
+.rm{background:none;border:0;color:var(--vermelho);font-size:13px;justify-self:end;padding:0}
+.tot{display:flex;justify-content:space-between;align-items:baseline;font-size:18px;padding-top:4px}
+.tot b{font-family:var(--display);font-weight:900;font-size:24px}
+.pix-tot{color:var(--verde);font-weight:600;font-size:14px;text-align:right;margin-top:-10px}
+.orc-form{border-top:1px solid var(--linha);padding-top:14px}
+.orc-form h4{margin:0 0 8px;font-size:16px}
+.orc-form small{color:var(--muted);font-size:13px}
+
+.modal{position:fixed;left:50%;top:50%;transform:translate(-50%,-48%);width:min(760px,calc(100% - 32px));max-height:calc(100% - 48px);overflow:auto;background:var(--card);color:var(--fg);border-radius:14px;z-index:80;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;display:grid;grid-template-columns:1fr 1fr}
+.modal.on{opacity:1;pointer-events:auto;transform:translate(-50%,-50%)}
+.modal .mfoto{background:var(--azul-claro);display:grid;place-items:center;color:var(--icone);min-height:260px}
+.modal .mfoto svg{width:40%}
+.modal .mfoto img{width:100%;height:100%;object-fit:cover}
+.modal .minfo{padding:24px;display:flex;flex-direction:column;gap:8px;position:relative}
+.modal .minfo h3{font-size:24px;padding-right:30px}
+.modal .minfo p{color:var(--muted);margin:0}
+.modal .fechar{position:absolute;top:14px;right:14px;color:var(--fg)}
+.mqtd{display:flex;align-items:center;gap:10px;margin-top:8px}
+.mqtd button{width:38px;height:38px;border-radius:6px;border:1px solid var(--linha);background:var(--bg);color:var(--fg);font-weight:700;font-size:18px}
+.mqtd input{width:64px;text-align:center;border:1px solid var(--linha);border-radius:6px;padding:8px;background:var(--bg);color:var(--fg)}
+
+@media (max-width:980px){.vant{grid-template-columns:1fr 1fr}.contato{grid-template-columns:1fr}}
+@media (max-width:720px){
+  html{scroll-padding-top:170px}
+  .hd{flex-wrap:wrap;gap:10px}.logo img{height:44px}.busca{order:3;flex-basis:100%}.btn-orc{margin-left:auto}
+  .slides{aspect-ratio:4/3;min-height:280px}
+  .slide{grid-template-columns:1fr;align-content:center;padding:22px 22px 36px}.slide .preco-big{display:none}
+  .slide p{margin:8px 0 14px}
+  .ads,.passos,.ft{grid-template-columns:1fr}
+  .grid{grid-template-columns:repeat(2,1fr);gap:10px}
+  .prod .info{padding:10px}
+  .por{font-size:21px}
+  .form .lin{grid-template-columns:1fr}
+  .modal{grid-template-columns:1fr}.modal .mfoto{min-height:200px;aspect-ratio:4/3}
+  .seta{display:none}
+}
+@media (max-width:420px){.vant{grid-template-columns:1fr}.btn-orc .txt{display:none}}
+@media (prefers-reduced-motion:reduce){.ticker .track{animation:none}*{transition:none!important}}
+</style>
+</head>
+<body class="carregando">
+<div class="loader" aria-hidden="true"><span></span></div>
+
+<div class="ticker" aria-label="Avisos"><div class="track" id="ticker"></div></div>
+
+<header>
+  <div class="wrap hd">
+    <a class="logo" href="#" id="linkInicio" aria-label="SCX Mix da Construção — início"><img id="logoTopo" src="assets/logo.png" alt="SCX Mix da Construção"></a>
+    <form class="busca" id="formBusca" role="search">
+      <input id="busca" type="search" placeholder="Buscar cimento, tinta, torneira..." aria-label="Buscar produtos">
+      <button type="submit">Buscar</button>
+    </form>
+    <button class="btn-orc" id="abrirOrc" type="button">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 4h2l2.4 11.2a2 2 0 0 0 2 1.6h7.7a2 2 0 0 0 2-1.5L21 8H6"/><circle cx="10" cy="20" r="1.4"/><circle cx="17" cy="20" r="1.4"/></svg>
+      <span class="txt">Meu orçamento</span><span class="qt num" id="qt">0</span>
+    </button>
+  </div>
+  <nav class="cats" aria-label="Departamentos"><div class="wrap" id="navCats"></div></nav>
+</header>
+
+<main id="inicio">
+  <div class="wrap hero" id="secBanner">
+    <div class="slides" id="slides" aria-roledescription="carrossel"></div>
+  </div>
+
+  <div class="wrap vant" id="secVantagens"></div>
+
+  <section class="wrap" id="secDepartamentos">
+    <div class="sec-h"><h2 id="tDep"></h2><p id="sDep"></p></div>
+    <div class="cat-grid" id="catGrid"></div>
+  </section>
+
+  <section class="wrap" id="ofertas">
+    <div class="sec-h">
+      <h2 id="tituloVitrine"></h2>
+      <div class="filtros" id="filtros"></div>
+    </div>
+    <div class="grid" id="grid"></div>
+    <p class="nota" id="notaPrecos"></p>
+  </section>
+
+  <section class="wrap" id="secAnuncios">
+    <div class="ads">
+      <div class="ad a1"><h3 id="ad1t"></h3><p id="ad1p"></p></div>
+      <div class="ad a2"><h3 id="ad2t"></h3><p id="ad2p"></p></div>
+    </div>
+  </section>
+
+  <section class="wrap" id="contato">
+    <div class="contato">
+      <div class="txt">
+        <h2 id="ctTitulo"></h2>
+        <p id="ctTexto"></p>
+        <p style="margin-bottom:4px">WhatsApp</p>
+        <div class="tel num" id="ctTel"></div>
+        <p id="ctHorario" style="margin-top:8px"></p>
+      </div>
+      <form class="form" id="formContato" novalidate>
+        <div class="lin">
+          <div class="campo"><label for="cNome">Seu nome</label><input id="cNome" autocomplete="name" maxlength="80" required></div>
+          <div class="campo"><label for="cTel">WhatsApp</label><input id="cTel" type="tel" inputmode="tel" autocomplete="tel" placeholder="(67) 9 9999-9999" maxlength="20" required></div>
+        </div>
+        <div class="campo"><label for="cMsg">O que você precisa?</label><textarea id="cMsg" maxlength="2000" placeholder="Ex.: 20 sacos de cimento, 1 milheiro de tijolo e areia média para entrega no bairro..."></textarea></div>
+        <p class="erro" id="cErro" hidden></p>
+        <div class="sucesso" id="cOk" hidden>Recebemos seu pedido. Se o WhatsApp não abriu, chame no número ao lado.</div>
+        <div><button class="btn-zap" type="submit" id="cEnviar">Enviar pelo WhatsApp</button></div>
+      </form>
+    </div>
+  </section>
+
+  <section class="wrap" id="secPassos">
+    <div class="sec-h"><h2>Como comprar</h2></div>
+    <div class="passos" id="passos"></div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap ft">
+    <div>
+      <img class="flogo" id="logoRodape" src="assets/logo.png" alt="SCX Mix da Construção">
+      <p style="margin-top:12px" id="rodapeTexto"></p>
+    </div>
+    <div>
+      <h4>Atendimento</h4>
+      <p>WhatsApp: <b class="num" id="rTel" style="user-select:all;color:#fff"></b></p>
+      <p id="rHorario"></p>
+      <p id="rEndereco"></p>
+      <p id="rInsta" hidden></p>
+    </div>
+    <div>
+      <h4>Departamentos</h4>
+      <p id="rDeps"></p>
+    </div>
+  </div>
+  <div class="wrap cred"><span>© <span id="ano"></span> SCX Mix da Construção. Todos os direitos reservados.</span><span>Desenvolvido por CRG - Soluções Tecnológicas</span></div>
+</footer>
+
+<a class="zap-flut" id="zapFlut" href="#" target="_blank" rel="noopener" aria-label="Falar no WhatsApp"><svg viewBox="0 0 32 32"><path d="M16 3C9 3 3.3 8.6 3.3 15.6c0 2.5.7 4.8 2 6.8L3 29l6.8-2.2c1.9 1 4 1.6 6.2 1.6 7 0 12.7-5.6 12.7-12.6S23 3 16 3zm0 23.1c-2 0-3.9-.6-5.5-1.6l-.4-.2-4 1.3 1.3-3.9-.3-.4a10.4 10.4 0 0 1-1.7-5.7C5.4 9.8 10.1 5.2 16 5.2s10.6 4.6 10.6 10.4S21.9 26.1 16 26.1zm5.8-7.8c-.3-.2-1.9-.9-2.2-1-.3-.1-.5-.2-.7.2l-1 1.2c-.2.2-.4.2-.7.1a8.6 8.6 0 0 1-4.3-3.7c-.3-.6.3-.5.9-1.7.1-.2 0-.4 0-.5l-1-2.4c-.3-.6-.5-.5-.7-.5h-.6c-.2 0-.6.1-.9.4-.3.3-1.2 1.1-1.2 2.8s1.2 3.2 1.4 3.5c.2.2 2.4 3.6 5.8 5 2.1.9 3 1 4 .8.7-.1 1.9-.8 2.2-1.5.3-.8.3-1.4.2-1.5 0-.2-.2-.3-.5-.4z"/></svg></a>
+
+<div class="veu" id="veu"></div>
+
+<aside class="orc" id="orc" aria-label="Meu orçamento" aria-hidden="true">
+  <div class="orc-h"><h3>Meu orçamento</h3><button class="fechar" type="button" data-fechar aria-label="Fechar">×</button></div>
+  <div class="orc-corpo">
+    <div id="itens"></div>
+    <div id="orcResumo">
+      <div class="tot"><span>Total estimado</span><b class="num" id="total">R$ 0,00</b></div>
+      <div class="pix-tot num" id="totPix"></div>
+    </div>
+    <form class="orc-form form" id="formOrc" novalidate>
+      <h4>Seus dados para o atendimento</h4>
+      <div class="campo"><label for="oNome">Nome</label><input id="oNome" autocomplete="name" maxlength="80"></div>
+      <div class="campo"><label for="oTel">WhatsApp</label><input id="oTel" type="tel" inputmode="tel" autocomplete="tel" placeholder="(67) 9 9999-9999" maxlength="20"></div>
+      <div class="campo"><label for="oBairro">Bairro para entrega (opcional)</label><input id="oBairro" maxlength="80"></div>
+      <p class="erro" id="oErro" hidden></p>
+      <button class="btn-zap" type="submit" id="oEnviar">Enviar orçamento pelo WhatsApp</button>
+      <small>O orçamento chega pronto no nosso WhatsApp. Confirmamos preço, estoque e entrega por lá.</small>
+    </form>
+    <div class="sucesso" id="oOk" hidden>Orçamento enviado! Se o WhatsApp não abriu, chame a gente no <b class="num" id="oOkTel"></b>.</div>
+  </div>
+</aside>
+
+<div class="modal" id="modalProd" role="dialog" aria-modal="true" aria-labelledby="mNome">
+  <div class="mfoto" id="mFoto"></div>
+  <div class="minfo">
+    <button class="fechar" type="button" data-fechar aria-label="Fechar">×</button>
+    <span class="tag" id="mCat" style="font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)"></span>
+    <h3 id="mNome"></h3>
+    <span class="de num" id="mDe"></span>
+    <span class="por num" id="mPor"></span>
+    <span class="pix num" id="mPix"></span>
+    <p id="mDesc"></p>
+    <div class="mqtd">
+      <button type="button" id="mMenos" aria-label="Diminuir">−</button>
+      <input id="mQtd" type="number" min="1" value="1" inputmode="numeric" aria-label="Quantidade">
+      <button type="button" id="mMais" aria-label="Aumentar">+</button>
+    </div>
+    <button class="add" type="button" id="mAdd">Adicionar ao orçamento</button>
+  </div>
+</div>
+
+<script src="config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script src="assets/comum.js"></script>
+<script>
+(function(){
+const { ICONES, DADOS_INICIAIS, esc, brl, urlSegura, soDigitos, linkWhats, mesclarSite, conectar } = window.SCX;
+const sb = conectar();
+const $ = s => document.querySelector(s);
+const CACHE = "scx-dados-v1";
+
+let site = mesclarSite(), categorias = [], produtos = [], banners = [];
+let filtro = "destaque", termo = "";
+
+/* ---------- carregar dados ---------- */
+function lerCache(){ try{ return JSON.parse(localStorage.getItem(CACHE)||"null"); }catch(e){ return null; } }
+function gravarCache(d){ try{ localStorage.setItem(CACHE, JSON.stringify(d)); }catch(e){} }
+
+function aplicar(d){
+  site = mesclarSite(d.site);
+  categorias = (d.categorias||[]).filter(c=>c.ativo!==false).sort((a,b)=>a.ordem-b.ordem);
+  produtos = (d.produtos||[]).filter(p=>p.ativo!==false).sort((a,b)=>(a.ordem||0)-(b.ordem||0)||a.nome.localeCompare(b.nome));
+  banners = (d.banners||[]).filter(b=>b.ativo!==false).sort((a,b)=>a.ordem-b.ordem);
+  renderTudo();
+  document.body.classList.remove("carregando");
+}
+
+async function carregar(){
+  if(!sb){ aplicar(DADOS_INICIAIS); return; }
+  const cache = lerCache();
+  if(cache) aplicar(cache);
+  const limite = setTimeout(()=>{ if(document.body.classList.contains("carregando")) aplicar(DADOS_INICIAIS); }, 6000);
+  try{
+    const [c, cat, p, b] = await Promise.all([
+      sb.from("config").select("valor").eq("chave","site").maybeSingle(),
+      sb.from("categorias").select("*").eq("ativo",true),
+      sb.from("produtos").select("*").eq("ativo",true),
+      sb.from("banners").select("*").eq("ativo",true)
+    ]);
+    const erro = c.error||cat.error||p.error||b.error;
+    if(erro) throw erro;
+    const d = { site: c.data ? c.data.valor : {}, categorias: cat.data, produtos: p.data, banners: b.data };
+    // banco ainda vazio: mostra o exemplo até o administrador cadastrar
+    if(!d.categorias.length && !d.produtos.length) Object.assign(d, { categorias: DADOS_INICIAIS.categorias, produtos: DADOS_INICIAIS.produtos });
+    if(!c.data) d.site = DADOS_INICIAIS.site;
+    if(!d.banners.length && !c.data) d.banners = DADOS_INICIAIS.banners;
+    gravarCache(d); aplicar(d);
+  }catch(e){
+    console.error("Erro ao carregar do Supabase:", e);
+    if(!cache) aplicar(DADOS_INICIAIS);
+  }finally{ clearTimeout(limite); }
+}
+
+function registrarAcesso(){
+  if(!sb) return;
+  try{ if(sessionStorage.getItem("scx-acesso")) return; sessionStorage.setItem("scx-acesso","1"); }catch(e){}
+  let ref = ""; try{ ref = document.referrer ? new URL(document.referrer).hostname : ""; }catch(e){}
+  if(ref === location.hostname) ref = "";
+  sb.from("acessos").insert({ pagina: (location.pathname||"/").slice(0,200), referencia: ref.slice(0,300) || null,
+    dispositivo: matchMedia("(max-width:820px)").matches ? "celular" : "computador" }).then(()=>{}, ()=>{});
+}
+
+/* ---------- render ---------- */
+const nomeCat = id => (categorias.find(c=>c.id===id)||{}).nome || "";
+const iconeCat = id => ICONES[(categorias.find(c=>c.id===id)||{}).icone] || ICONES.caixa;
+const precoPix = v => v*(1-(Number(site.descontoPix)||0)/100);
+const temPix = () => (Number(site.descontoPix)||0) > 0;
+
+function renderTudo(){
+  const r = document.documentElement.style;
+  if(/^#[0-9a-f]{6}$/i.test(site.corAzul)) r.setProperty("--azul", site.corAzul);
+  if(/^#[0-9a-f]{6}$/i.test(site.corAmarelo)) r.setProperty("--amarelo", site.corAmarelo);
+  const logo = urlSegura(site.logoUrl) || "assets/logo.png";
+  $("#logoTopo").src = logo; $("#logoRodape").src = logo;
+
+  const av = (site.avisos||[]).filter(Boolean);
+  $(".ticker").hidden = !av.length;
+  $("#ticker").innerHTML = [...av,...av].map(a=>`<span>${esc(a)}</span>`).join("");
+
+  renderBanners();
+
+  const icV = [
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 6h13v10H1zM14 10h4l4 4v2h-8"/><circle cx="5" cy="18" r="2"/><circle cx="18" cy="18" r="2"/></svg>',
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3 7 7 .6-5.3 4.6 1.6 7L12 17.6 5.7 21.2l1.6-7L2 9.6 9 9z"/></svg>',
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>',
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-4-7.5L21 3v5h-5"/><path d="M9 12l2 2 4-4"/></svg>'];
+  const vant = (site.vantagens||[]).filter(v=>v&&v.titulo);
+  $("#secVantagens").hidden = !site.secoes.vantagens || !vant.length;
+  $("#secVantagens").innerHTML = vant.map((v,i)=>`<div>${icV[i%4]}<p><b>${esc(v.titulo)}</b><span>${esc(v.texto)}</span></p></div>`).join("");
+
+  $("#secDepartamentos").hidden = !site.secoes.departamentos;
+  $("#tDep").textContent = site.tituloDepartamentos; $("#sDep").textContent = site.subDepartamentos;
+  $("#catGrid").innerHTML = categorias.map(c=>`<button class="cat" type="button" data-cat="${esc(c.id)}"><div class="ic">${ICONES[c.icone]||ICONES.caixa}</div>${esc(c.nome)}</button>`).join("");
+  $("#navCats").innerHTML = `<button type="button" data-cat="destaque">Ofertas</button>` + categorias.map(c=>`<button type="button" data-cat="${esc(c.id)}">${esc(c.nome)}</button>`).join("") + `<button type="button" data-cat="todos">Todos os produtos</button>`;
+  $("#filtros").innerHTML = [["destaque","Ofertas"],["todos","Todos"],...categorias.map(c=>[c.id,c.nome.split(" ")[0]])].map(([i,n])=>`<button class="chip" type="button" data-cat="${esc(i)}">${esc(n)}</button>`).join("");
+  $("#notaPrecos").textContent = site.notaPrecos;
+  if(!produtos.some(p=>p.destaque) && filtro==="destaque") filtro = "todos";
+
+  $("#secAnuncios").hidden = !site.secoes.anuncios;
+  const ad = site.anuncios||[];
+  $("#ad1t").textContent = (ad[0]||{}).titulo||""; $("#ad1p").textContent = (ad[0]||{}).texto||"";
+  $("#ad2t").textContent = (ad[1]||{}).titulo||""; $("#ad2p").textContent = (ad[1]||{}).texto||"";
+
+  $("#contato").hidden = !site.secoes.contato;
+  $("#ctTitulo").textContent = site.contatoTitulo; $("#ctTexto").textContent = site.contatoTexto;
+  $("#ctTel").textContent = site.telefone; $("#ctHorario").textContent = site.horario;
+
+  $("#secPassos").hidden = !site.secoes.passos;
+  $("#passos").innerHTML = (site.passos||[]).filter(p=>p&&p.titulo).map(p=>`<div class="passo"><b>${esc(p.titulo)}</b><span>${esc(p.texto)}</span></div>`).join("");
+
+  $("#rodapeTexto").textContent = site.rodapeTexto;
+  $("#rTel").textContent = site.telefone; $("#rHorario").textContent = site.horario;
+  $("#rEndereco").textContent = site.endereco||"";
+  const ig = String(site.instagram||"").replace(/^@/,"").trim();
+  $("#rInsta").hidden = !ig;
+  if(ig) $("#rInsta").innerHTML = `Instagram: <a href="https://instagram.com/${encodeURIComponent(ig)}" target="_blank" rel="noopener">@${esc(ig)}</a>`;
+  $("#rDeps").textContent = categorias.map(c=>c.nome).join(" · ");
+  $("#oOkTel").textContent = site.telefone;
+  $("#zapFlut").href = linkWhats(site.whatsapp, "Olá, SCX Mix! Vim pelo site.");
+  $("#ano").textContent = new Date().getFullYear();
+
+  renderVitrine(); atualizaOrc();
+}
+
+/* banners */
+let atual = 0, timer;
+function renderBanners(){
+  const box = $("#slides");
+  $("#secBanner").hidden = !banners.length;
+  if(!banners.length){ clearInterval(timer); return; }
+  box.innerHTML = banners.map((b,i)=>{
+    const img = urlSegura(b.imagem_url), imgM = urlSegura(b.imagem_mobile_url) || img;
+    const acao = esc(b.botao_acao||"");
+    if(img && !b.titulo){
+      return `<div class="slide arte" data-acao="${acao}" role="group" aria-label="Banner ${i+1}"><picture><source media="(max-width:720px)" srcset="${esc(imgM)}"><img src="${esc(img)}" alt="${esc(b.etiqueta||"Promoção SCX Mix")}" ${i?'loading="lazy"':''}></picture></div>`;
+    }
+    const bg = img ? ` com-foto" style="background-image:url('${esc(img)}')` : ` ${esc(["s1","s2","s3"].includes(b.estilo)?b.estilo:"s1")}`;
+    const preco = b.preco ? `<div class="preco-big">${b.preco_rotulo?`<small>${esc(b.preco_rotulo)}</small>`:""}<b class="num"><i>R$</i>${esc(b.preco)}</b>${b.preco_sufixo?`<small>${esc(b.preco_sufixo)}</small>`:""}</div>` : "<div></div>";
+    return `<div class="slide${bg}" role="group" aria-label="Banner ${i+1}">
+      <div>${b.etiqueta?`<span class="eyebrow">${esc(b.etiqueta)}</span>`:""}
+        <h2>${esc(b.titulo)} ${b.destaque?`<em>${esc(b.destaque)}</em>`:""}</h2>
+        ${b.subtitulo?`<p>${esc(b.subtitulo)}</p>`:""}
+        ${b.botao_texto?`<button class="cta" type="button" data-acao="${acao}">${esc(b.botao_texto)}</button>`:""}
+      </div>${preco}</div>`;
+  }).join("") + (banners.length>1 ? `<button class="seta l" type="button" aria-label="Banner anterior" id="prev">‹</button><button class="seta r" type="button" aria-label="Próximo banner" id="next">›</button><div class="dots" id="dots">${banners.map((_,i)=>`<button type="button" aria-label="Banner ${i+1}"></button>`).join("")}</div>` : "");
+  if(banners.length>1){
+    [...$("#dots").children].forEach((d,i)=>d.onclick=()=>{mostra(i);auto();});
+    $("#prev").onclick=()=>{mostra(atual-1);auto();}; $("#next").onclick=()=>{mostra(atual+1);auto();};
+  }
+  mostra(Math.min(atual, banners.length-1)); auto();
+}
+function mostra(i){
+  const s=[...document.querySelectorAll(".slide")]; if(!s.length) return;
+  atual=(i+s.length)%s.length; s.forEach((el,k)=>el.classList.toggle("on",k===atual));
+  const d=$("#dots"); if(d) [...d.children].forEach((el,k)=>el.classList.toggle("on",k===atual));
+}
+function auto(){ clearInterval(timer); if(banners.length>1 && !matchMedia("(prefers-reduced-motion:reduce)").matches) timer=setInterval(()=>mostra(atual+1),6000); }
+let toqueX=null;
+$("#slides").addEventListener("touchstart",e=>{toqueX=e.touches[0].clientX;},{passive:true});
+$("#slides").addEventListener("touchend",e=>{ if(toqueX==null) return; const dx=e.changedTouches[0].clientX-toqueX; if(Math.abs(dx)>40){mostra(atual+(dx<0?1:-1));auto();} toqueX=null; });
+
+function executarAcao(a, el){
+  a = String(a||"");
+  if(a.startsWith("cat:")){ filtrar(a.slice(4)); }
+  else if(a.startsWith("prod:")){ const id=a.slice(5); if(produtos.find(p=>String(p.id)===id)){ add(id,1); abre("#orc"); } }
+  else if(a.startsWith("url:")){ const u=urlSegura(a.slice(4)); if(u) window.open(u,"_blank","noopener"); }
+  else if(a==="contato"){ $("#contato").scrollIntoView({behavior:"smooth"}); }
+}
+
+/* vitrine */
+const norm = s => String(s||"").normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase();
+function filtrar(c){ filtro=c; termo=""; $("#busca").value=""; renderVitrine(); $("#ofertas").scrollIntoView({behavior:"smooth"}); }
+function cardProduto(p){
+  const off = p.preco_de && Number(p.preco_de)>Number(p.preco) ? Math.round((1-p.preco/p.preco_de)*100) : 0;
+  const foto = urlSegura(p.foto_url) ? `<img src="${esc(p.foto_url)}" alt="" loading="lazy">` : iconeCat(p.categoria);
+  return `<article class="prod">
+    <button class="foto" type="button" data-ver="${esc(p.id)}" aria-label="Ver ${esc(p.nome)}">${off?`<span class="selo num">-${off}%</span>`:""}${foto}</button>
+    <div class="info">
+      <span class="tag">${esc(nomeCat(p.categoria))}</span>
+      <h3><button type="button" data-ver="${esc(p.id)}">${esc(p.nome)}</button></h3>
+      <span class="de num">${off?"de "+brl(p.preco_de):""}</span>
+      <span class="por num">${brl(p.preco)} <small>/${esc(p.unidade)}</small></span>
+      ${temPix()?`<span class="pix num">${brl(precoPix(p.preco))} no PIX</span>`:""}
+      <button class="add" type="button" data-add="${esc(p.id)}">Adicionar</button>
+    </div></article>`;
+}
+function renderVitrine(){
+  let lista = produtos;
+  if(filtro==="destaque") lista = lista.filter(p=>p.destaque);
+  else if(filtro!=="todos") lista = lista.filter(p=>p.categoria===filtro);
+  if(termo) lista = produtos.filter(p=>norm(p.nome+" "+nomeCat(p.categoria)+" "+(p.descricao||"")).includes(norm(termo)));
+  $("#tituloVitrine").textContent = termo ? `Resultados para "${termo}"` : filtro==="destaque" ? site.tituloOfertas : filtro==="todos" ? "Todos os produtos" : nomeCat(filtro);
+  document.querySelectorAll("#filtros .chip, nav.cats button").forEach(b=>b.classList.toggle("on", b.dataset.cat===filtro && !termo));
+  $("#grid").innerHTML = lista.length ? lista.map(cardProduto).join("")
+    : `<p class="vazio">Nenhum produto encontrado. Chame a gente no WhatsApp que verificamos no estoque.</p>`;
+}
+
+/* modal de produto */
+let prodModal = null;
+function verProduto(id){
+  const p = produtos.find(x=>String(x.id)===String(id)); if(!p) return;
+  prodModal = p;
+  const off = p.preco_de && Number(p.preco_de)>Number(p.preco);
+  $("#mFoto").innerHTML = urlSegura(p.foto_url) ? `<img src="${esc(p.foto_url)}" alt="${esc(p.nome)}">` : iconeCat(p.categoria);
+  $("#mCat").textContent = nomeCat(p.categoria); $("#mNome").textContent = p.nome;
+  $("#mDe").textContent = off ? "de "+brl(p.preco_de) : "";
+  $("#mPor").innerHTML = `${brl(p.preco)} <small>/${esc(p.unidade)}</small>`;
+  $("#mPix").textContent = temPix() ? brl(precoPix(p.preco))+" no PIX" : "";
+  $("#mDesc").textContent = p.descricao||""; $("#mDesc").hidden = !p.descricao;
+  $("#mQtd").value = 1; abre("#modalProd");
+}
+$("#mMenos").onclick=()=>{ $("#mQtd").value=Math.max(1,(+$("#mQtd").value||1)-1); };
+$("#mMais").onclick=()=>{ $("#mQtd").value=(+$("#mQtd").value||0)+1; };
+$("#mAdd").onclick=()=>{ if(prodModal){ add(prodModal.id, Math.max(1,parseInt($("#mQtd").value)||1)); fecha(); abre("#orc"); } };
+
+/* eventos gerais */
+document.addEventListener("click", e=>{
+  const c=e.target.closest("[data-cat]"); if(c){ filtrar(c.dataset.cat); return; }
+  const a=e.target.closest("[data-add]"); if(a){ add(a.dataset.add,1,a); return; }
+  const v=e.target.closest("[data-ver]"); if(v){ verProduto(v.dataset.ver); return; }
+  const ac=e.target.closest("[data-acao]"); if(ac && ac.dataset.acao){ executarAcao(ac.dataset.acao, ac); return; }
+  if(e.target.closest("[data-fechar]") || e.target===$("#veu")) fecha();
+});
+document.addEventListener("keydown", e=>{ if(e.key==="Escape") fecha(); });
+$("#linkInicio").onclick = e=>{ e.preventDefault(); window.scrollTo({top:0,behavior:"smooth"}); };
+$("#formBusca").addEventListener("submit", e=>{ e.preventDefault(); termo=$("#busca").value.trim(); renderVitrine(); $("#ofertas").scrollIntoView({behavior:"smooth"}); });
+$("#busca").addEventListener("input", e=>{ termo=e.target.value.trim(); renderVitrine(); });
+
+/* orçamento (futuro carrinho) */
+let orc = {};
+try{ orc = JSON.parse(localStorage.getItem("scx-orc")||"{}")||{}; }catch(e){ orc={}; }
+const salva = ()=>{ try{ localStorage.setItem("scx-orc", JSON.stringify(orc)); }catch(e){} };
+const itensOrc = () => Object.entries(orc).map(([id,q])=>({p:produtos.find(x=>String(x.id)===id), q})).filter(x=>x.p);
+const soma = () => itensOrc().reduce((t,x)=>t+x.p.preco*x.q,0);
+function add(id, q, btn){
+  orc[id]=(orc[id]||0)+q; salva(); atualizaOrc();
+  $("#oOk").hidden = true; $("#formOrc").hidden = false;
+  if(btn && btn.classList.contains("add")){ btn.classList.add("ok"); btn.textContent="Adicionado ✓"; setTimeout(()=>{btn.classList.remove("ok");btn.textContent="Adicionar";},1200); }
+}
+function atualizaOrc(){
+  const its = itensOrc();
+  $("#qt").textContent = its.reduce((a,x)=>a+x.q,0);
+  $("#itens").innerHTML = its.length ? its.map(({p,q})=>`<div class="it"><b>${esc(p.nome)}</b><span class="sub num">${brl(p.preco*q)}</span>
+      <div class="qtd"><button type="button" data-q="${esc(p.id)}" data-d="-1" aria-label="Diminuir">−</button><span class="num">${q}</span><button type="button" data-q="${esc(p.id)}" data-d="1" aria-label="Aumentar">+</button><small style="color:var(--muted)">${brl(p.preco)}/${esc(p.unidade)}</small></div>
+      <button class="rm" type="button" data-rm="${esc(p.id)}">Remover</button></div>`).join("")
+    : `<p class="vazio">Seu orçamento está vazio.<br>Adicione produtos da vitrine.</p>`;
+  $("#orcResumo").hidden = !its.length;
+  if($("#oOk").hidden) $("#formOrc").hidden = !its.length;
+  $("#total").textContent = brl(soma());
+  $("#totPix").textContent = temPix() ? `No PIX: ${brl(precoPix(soma()))}` : "";
+}
+$("#itens").addEventListener("click", e=>{
+  const q=e.target.closest("[data-q]"), r=e.target.closest("[data-rm]");
+  if(q){ const id=q.dataset.q; orc[id]+=+q.dataset.d; if(orc[id]<=0) delete orc[id]; }
+  if(r){ delete orc[r.dataset.rm]; }
+  if(q||r){ salva(); atualizaOrc(); }
+});
+let focoAntes=null;
+function abre(sel){ focoAntes=document.activeElement; const el=$(sel); el.classList.add("on"); el.setAttribute("aria-hidden","false"); $("#veu").classList.add("on"); const f=el.querySelector("button, input"); if(f) setTimeout(()=>f.focus(),50); }
+function fecha(){ document.querySelectorAll(".orc.on,.modal.on").forEach(el=>{el.classList.remove("on");el.setAttribute("aria-hidden","true");}); $("#veu").classList.remove("on"); if(focoAntes&&focoAntes.focus) focoAntes.focus(); }
+$("#abrirOrc").onclick = ()=>abre("#orc");
+
+/* envio de lead + WhatsApp */
+function validar(nome, tel){
+  if(nome.trim().length < 2) return "Informe seu nome.";
+  const d = soDigitos(tel); if(d.length < 10 || d.length > 13) return "Informe um WhatsApp com DDD, por exemplo (67) 9 9999-9999.";
+  return "";
+}
+async function salvarLead(dados){
+  if(!sb) return;
+  const t = new Promise(r=>setTimeout(()=>r({error:{message:"tempo esgotado"}}),4000));
+  const r = await Promise.race([sb.from("leads").insert(dados), t]);
+  if(r && r.error) console.warn("Lead não salvo:", r.error.message||r.error);
+}
+async function enviar(dados, mensagem, botao){
+  const janela = window.open("", "_blank");   // abre já no clique (evita bloqueio de pop-up)
+  botao.disabled = true;
+  try{ await salvarLead(dados); }catch(e){}
+  const url = linkWhats(site.whatsapp, mensagem);
+  if(janela && !janela.closed){ try{ janela.opener=null; janela.location.href=url; }catch(e){ location.href=url; } }
+  else location.href = url;
+  botao.disabled = false;
+}
+$("#formOrc").addEventListener("submit", async e=>{
+  e.preventDefault();
+  const nome=$("#oNome").value.trim(), tel=$("#oTel").value.trim(), bairro=$("#oBairro").value.trim();
+  const err = validar(nome, tel); $("#oErro").hidden=!err; $("#oErro").textContent=err; if(err) return;
+  const its = itensOrc(); if(!its.length) return;
+  const linhas = its.map(({p,q})=>`• ${q}x ${p.nome} (${p.unidade}) — ${brl(p.preco*q)}`);
+  const msg = `Olá, SCX Mix! Sou ${nome} e gostaria de um orçamento:\n\n${linhas.join("\n")}\n\nTotal estimado: ${brl(soma())}${bairro?`\nEntrega no bairro: ${bairro}`:""}`;
+  await enviar({ nome, telefone: tel, bairro: bairro||null, origem:"orcamento",
+    itens: its.map(({p,q})=>({id:p.id, nome:p.nome, unidade:p.unidade, preco:Number(p.preco), qtd:q})), total: Number(soma().toFixed(2)) }, msg, $("#oEnviar"));
+  orc={}; salva(); $("#formOrc").hidden=true; $("#oOk").hidden=false; atualizaOrc();
+  try{ localStorage.setItem("scx-cliente", JSON.stringify({nome, tel, bairro})); }catch(e){}
+});
+$("#formContato").addEventListener("submit", async e=>{
+  e.preventDefault();
+  const nome=$("#cNome").value.trim(), tel=$("#cTel").value.trim(), m=$("#cMsg").value.trim();
+  const err = validar(nome, tel) || (m.length<3 ? "Conte o que você precisa." : ""); $("#cErro").hidden=!err; $("#cErro").textContent=err; if(err) return;
+  await enviar({ nome, telefone: tel, mensagem: m, origem:"contato" }, `Olá, SCX Mix! Sou ${nome}.\n\n${m}`, $("#cEnviar"));
+  $("#cOk").hidden=false; $("#formContato").reset();
+  try{ localStorage.setItem("scx-cliente", JSON.stringify({nome, tel})); }catch(e){}
+});
+try{ const c=JSON.parse(localStorage.getItem("scx-cliente")||"null"); if(c){ $("#oNome").value=$("#cNome").value=c.nome||""; $("#oTel").value=$("#cTel").value=c.tel||""; $("#oBairro").value=c.bairro||""; } }catch(e){}
+
+carregar();
+registrarAcesso();
+})();
+</script>
+</body>
+</html>
