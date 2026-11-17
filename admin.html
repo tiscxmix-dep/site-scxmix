@@ -981,6 +981,11 @@ async function pgTextos(el){
         <div class="campo"><label for="tEnd">Endereço</label><input type="text" id="tEnd" value="${esc(s.endereco)}" maxlength="160"></div>
         <div class="campo"><label for="tIg">Instagram (opcional)</label><input type="text" id="tIg" value="${esc(s.instagram)}" maxlength="40" placeholder="@scxmix"></div>
         <div class="campo"><label for="tPix">Desconto no PIX (%)</label><input type="number" id="tPix" value="${esc(s.descontoPix)}" min="0" max="50" step="0.5"><small>Use 0 para não mostrar preço no PIX.</small></div>
+        <div class="campo"><label for="tEstilo">Mensagem do pedido no WhatsApp</label><select id="tEstilo">
+          <option value="auto">Automático (emojis no celular, simples no computador)</option>
+          <option value="emoji">Sempre com emojis</option>
+          <option value="simples">Sempre simples (sem emojis)</option></select>
+          <small>No WhatsApp Web e no computador os emojis podem chegar como quadradinhos.</small></div>
       </div>
     </fieldset>
     <fieldset><legend>Faixa amarela de avisos (topo)</legend>
@@ -1005,12 +1010,13 @@ async function pgTextos(el){
     <div class="salvar-fixo"><button class="btn" type="button" id="tDesf">Desfazer alterações</button><button class="btn prim" type="submit" id="tSalvar">Salvar textos</button></div>
   </form>`;
   $("#tDesf").onclick = () => pgTextos(el);
+  $("#tEstilo").value = s.estiloMensagem || "auto";
   $("#fTextos").addEventListener("submit", async e => {
     e.preventDefault();
     const zap = soDigitos($("#tZap").value); if(zap.length<10) return toast("Confira o número do WhatsApp (com DDD).", true);
     const g = id => $("#"+id).value.trim();
     const novo = { ...site, whatsapp: zap, telefone: g("tTel"), horario: g("tHor"), endereco: g("tEnd"), instagram: g("tIg"),
-      descontoPix: Math.max(0, Math.min(50, Number($("#tPix").value)||0)),
+      descontoPix: Math.max(0, Math.min(50, Number($("#tPix").value)||0)), estiloMensagem: $("#tEstilo").value,
       avisos: $("#tAv").value.split("\n").map(x=>x.trim()).filter(Boolean),
       vantagens: [0,1,2,3].map(i=>({ titulo:g("vt"+i), texto:g("vx"+i) })),
       tituloDepartamentos: g("tDep"), subDepartamentos: g("tDepS"), tituloOfertas: g("tOf"), notaPrecos: g("tNota"),

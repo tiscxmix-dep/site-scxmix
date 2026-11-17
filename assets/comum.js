@@ -33,6 +33,7 @@
       endereco: "Campo Grande - MS",
       instagram: "",
       descontoPix: 5,
+      estiloMensagem: "auto",
       corAzul: "#2e3192",
       corAmarelo: "#ffe814",
       logoUrl: "",

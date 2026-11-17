@@ -671,6 +671,9 @@ $("#abrirOrc").onclick = ()=>abre("#orc");
 /* envio de lead + WhatsApp */
 const dominio = () => (/^(localhost|127\.)/.test(location.hostname) || !location.hostname) ? "www.scxmix.com.br" : location.hostname;
 const agora = () => { const d=new Date(); return d.toLocaleDateString("pt-BR",{day:"2-digit",month:"2-digit"})+" às "+d.toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"}); };
+// emojis: no celular chegam certos; no WhatsApp Web/Desktop podem virar "quadradinhos"
+const usarEmoji = () => site.estiloMensagem==="emoji" ? true : site.estiloMensagem==="simples" ? false
+  : /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent) || (navigator.maxTouchPoints>1 && /Macintosh/.test(navigator.userAgent));
 const codigoPedido = () => "SCX-" + Date.now().toString(36).slice(-5).toUpperCase();
 function validar(nome, tel){
   if(nome.trim().length < 2) return "Informe seu nome.";
@@ -705,24 +708,27 @@ $("#formOrc").addEventListener("submit", async e=>{
   const err = validar(nome, tel) || (rua.length<3 ? "Informe a rua para a entrega." : !numero ? "Informe o número da casa (ou S/N se não tiver)." : bairro.length<2 ? "Informe o bairro para a entrega." : ""); $("#oErro").hidden=!err; $("#oErro").textContent=err; if(err) return;
   const its = itensOrc(); if(!its.length) return;
   const cod = codigoPedido();
-  const linhas = its.map(({p,q})=>`▪️ ${q}x ${p.nome} (${p.unidade}) — ${brl(p.preco*q)}`);
+  const E = usarEmoji(), ic = (e, t) => E ? `${e} ${t}` : t, sep = E ? null : `------------------------------`;
+  const linhas = its.map(({p,q})=>`${E?"▪️":"•"} ${q}x ${p.nome} (${p.unidade}) - ${brl(p.preco*q)}`);
   const msg = [
-    `🛒 *NOVO PEDIDO DE ORÇAMENTO*`,
-    `🌐 _Pedido feito pelo site ${dominio()}_`,
-    `🔖 Nº ${cod} · ${agora()}`,
+    ic("🛒", `*NOVO PEDIDO DE ORÇAMENTO*`),
+    ic("🌐", `_Pedido feito pelo site ${dominio()}_`),
+    ic("🔖", `Nº ${cod} - ${agora()}`),
+    sep,
     ``,
-    `👤 *Cliente:* ${nome}`,
-    `📱 *WhatsApp:* ${tel}`,
+    ic("👤", `*Cliente:* ${nome}`),
+    ic("📱", `*WhatsApp:* ${tel}`),
     ``,
-    `📍 *Endereço de entrega:*`,
-    `${rua}, nº ${numero} — ${bairro}`,
+    ic("📍", `*Endereço de entrega:*`),
+    `${rua}, nº ${numero} - ${bairro}`,
     compl ? `_${compl}_` : null,
     ``,
-    `*Itens:*`,
+    ic("🧾", `*Itens:*`),
     ...linhas,
     ``,
-    `💰 *Total estimado:* ${brl(soma())}`,
-    temPix() ? `💠 No PIX: ${brl(precoPix(soma()))}` : null,
+    sep,
+    ic("💰", `*Total estimado:* ${brl(soma())}`),
+    temPix() ? ic("💠", `*No PIX:* ${brl(precoPix(soma()))}`) : null,
     ``,
     `_Aguardo a confirmação de preço, estoque e entrega._`
   ].filter(l=>l!==null).join("\n");
@@ -738,17 +744,19 @@ $("#formContato").addEventListener("submit", async e=>{
   e.preventDefault();
   const nome=$("#cNome").value.trim(), tel=$("#cTel").value.trim(), m=$("#cMsg").value.trim();
   const err = validar(nome, tel) || (m.length<3 ? "Conte o que você precisa." : ""); $("#cErro").hidden=!err; $("#cErro").textContent=err; if(err) return;
+  const E = usarEmoji(), ic = (e, t) => E ? `${e} ${t}` : t;
   const msg = [
-    `🏗️ *NOVO PEDIDO DE ORÇAMENTO DE OBRA*`,
-    `🌐 _Mensagem enviada pelo site ${dominio()}_`,
-    `🕒 ${agora()}`,
+    ic("🏗️", `*NOVO PEDIDO DE ORÇAMENTO DE OBRA*`),
+    ic("🌐", `_Mensagem enviada pelo site ${dominio()}_`),
+    ic("🕒", `${agora()}`),
+    E ? null : `------------------------------`,
     ``,
-    `👤 *Cliente:* ${nome}`,
-    `📱 *WhatsApp:* ${tel}`,
+    ic("👤", `*Cliente:* ${nome}`),
+    ic("📱", `*WhatsApp:* ${tel}`),
     ``,
-    `📝 *O que preciso:*`,
+    ic("📝", `*O que preciso:*`),
     m
-  ].join("\n");
+  ].filter(l=>l!==null).join("\n");
   await enviar({ nome, telefone: tel, mensagem: m, origem:"contato" }, msg, $("#cEnviar"));
   $("#cOk").hidden=false; $("#formContato").reset();
   try{ localStorage.setItem("scx-cliente", JSON.stringify({nome, tel})); }catch(e){}
