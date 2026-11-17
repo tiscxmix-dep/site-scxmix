@@ -6,6 +6,12 @@
 <meta name="robots" content="noindex, nofollow">
 <title>Painel SCX Mix</title>
 <link rel="icon" href="assets/favicon.png">
+<link rel="manifest" href="admin.webmanifest">
+<link rel="apple-touch-icon" href="assets/painel-192.png">
+<meta name="theme-color" content="#1f2170">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Painel SCX">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,600..900&family=Barlow:wght@400;500;600;700&display=swap">
@@ -262,7 +268,7 @@ legend{font-family:var(--display);font-weight:800;font-stretch:108%;font-size:16
       <a href="#departamentos" data-r="departamentos"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6z"/></svg>Departamentos</a>
       <a href="#textos" data-r="textos"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7V4h16v3M9 20h6M12 4v16"/></svg>Textos e contato</a>
       <a href="#aparencia" data-r="aparencia"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 0 0 18c1.5 0 2-1 2-2s-1-1.5-1-2.5S14 15 15 15h2a4 4 0 0 0 4-4c0-4.4-4-8-9-8z"/><circle cx="7.5" cy="11" r="1"/><circle cx="10" cy="7" r="1"/><circle cx="15" cy="7.5" r="1"/></svg>Aparência</a>
-      <a href="#usuarios" data-r="usuarios"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>Acesso e senha</a>
+      <a href="#usuarios" data-r="usuarios"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg><span id="menuUsuarios">Usuários e senha</span></a>
     </nav>
     <div class="rodape">Painel SCX Mix<br>Desenvolvido por CRG - Soluções Tecnológicas</div>
   </aside>
@@ -446,38 +452,44 @@ $("#lEsqueci").onclick = async ()=>{
   const { error } = await sb.auth.resetPasswordForEmail(email, { redirectTo: location.origin + location.pathname });
   if(error) msgLogin(traduzErro(error), true); else msgLogin("Se esse e-mail estiver cadastrado, você vai receber um link para criar uma nova senha.");
 };
-$("#sair").onclick = async ()=>{ await sb.auth.signOut(); iniciado=false; location.hash=""; telaLogin(); };
+$("#sair").onclick = async ()=>{ await sb.auth.signOut(); location.hash=""; location.reload(); };
 
 async function entrar(){
   const { data:{ session } } = await sb.auth.getSession();
   if(!session){ telaLogin(); return; }
   if(modoRecuperar){ telaLogin(); return; }
-  const { data: admin, error } = await sb.rpc("is_admin");
-  if(error || !admin){
+  const { data: p, error } = await sb.rpc("meu_papel");
+  if(error || !PAPEIS[p]){
     await sb.auth.signOut();
-    telaLogin(); msgLogin(error ? traduzErro(error) : "Este e-mail ainda não está liberado como administrador. Veja o LEIAME.md, passo do administrador.", true);
+    telaLogin(); msgLogin(error ? traduzErro(error) : "Este e-mail ainda não está liberado no painel. Peça para um administrador adicionar você em “Usuários e senha”.", true);
     return;
   }
-  $("#usuarioEmail").textContent = session.user.email;
+  papel = p; meuEmail = session.user.email;
+  $("#usuarioEmail").textContent = session.user.email + " · " + PAPEIS[p];
+  $$("#menu a").forEach(a=>a.hidden = !permitido(a.dataset.r));
+  $("#menuUsuarios").textContent = papel==="admin" ? "Usuários e senha" : "Minha senha";
   mostrar("vApp");
   if(!iniciado){
     iniciado = true;
     try{ await carregarConteudo(); }catch(e){ falha(e,"Erro ao carregar"); }
-    contarNovos().catch(()=>{});
-    setInterval(()=>contarNovos().catch(()=>{}), 60000);
+    if(papel==="admin"){ contarNovos().catch(()=>{}); setInterval(()=>contarNovos().catch(()=>{}), 60000); }
   }
   navegar();
 }
 
-/* ---------- rotas ---------- */
+/* ---------- rotas e perfis ---------- */
+const PAPEIS = { admin:"Administrador", editor:"Editor de produtos" };
+const DO_EDITOR = ["produtos","usuarios"];   // o que o editor de produtos acessa
+let papel = null, meuEmail = "";
+const permitido = r => papel==="admin" || DO_EDITOR.includes(r);
 const PAGINAS = { painel:["Painel",pgPainel], leads:["Leads",pgLeads], banners:["Banners",pgBanners], produtos:["Produtos e preços",pgProdutos],
-  departamentos:["Departamentos",pgDepartamentos], textos:["Textos e contato",pgTextos], aparencia:["Aparência",pgAparencia], usuarios:["Acesso e senha",pgUsuarios] };
+  departamentos:["Departamentos",pgDepartamentos], textos:["Textos e contato",pgTextos], aparencia:["Aparência",pgAparencia], usuarios:["Usuários e senha",pgUsuarios] };
 let rota = "painel";
 function navegar(){
   const h = location.hash.replace("#","");
-  rota = PAGINAS[h] ? h : "painel";
+  rota = PAGINAS[h] && permitido(h) ? h : (papel==="admin" ? "painel" : "produtos");
+  $("#tituloPag").textContent = rota==="usuarios" && papel!=="admin" ? "Minha senha" : PAGINAS[rota][0];
   $$("#menu a").forEach(a=>a.classList.toggle("on", a.dataset.r===rota));
-  $("#tituloPag").textContent = PAGINAS[rota][0];
   $("#lado").classList.remove("aberto");
   $("#conteudo").innerHTML = `<div class="carregando-dados">Carregando...</div>`;
   window.scrollTo(0,0);
@@ -594,7 +606,7 @@ async function semear(){
     }
     const { data: temCfg } = await sb.from("config").select("chave").eq("chave","site").maybeSingle();
     if(!temCfg) await salvarSite(DADOS_INICIAIS.site);
-    await carregarConteudo(); toast("Conteúdo de exemplo carregado."); navegar();
+    await carregarConteudo(); toast("Conteúdo de exemplo carregado."); if(rota==="painel") navegar();
   }catch(e){ falha(e,"Não foi possível carregar"); b.disabled=false; b.textContent="Carregar conteúdo de exemplo"; }
 }
 
@@ -603,7 +615,7 @@ let filtroLeads = { status:"", origem:"", dias:"30", busca:"" }, leadsCache = []
 async function pgLeads(el){
   el.innerHTML = `
     <div class="barra-ferr">
-      <input type="search" id="lBusca" placeholder="Buscar por nome, telefone ou bairro" style="max-width:300px" aria-label="Buscar leads">
+      <input type="search" id="lBusca" placeholder="Buscar por nome, telefone, rua ou bairro" style="max-width:300px" aria-label="Buscar leads">
       <select id="lStatus" style="width:auto" aria-label="Status"><option value="">Todos os status</option>${Object.entries(STATUS).map(([k,v])=>`<option value="${k}">${v}</option>`).join("")}</select>
       <select id="lOrigem" style="width:auto" aria-label="Origem"><option value="">Todas as origens</option>${Object.entries(ORIGEM).map(([k,v])=>`<option value="${k}">${v}</option>`).join("")}</select>
       <select id="lDias" style="width:auto" aria-label="Período"><option value="7">Últimos 7 dias</option><option value="30">Últimos 30 dias</option><option value="90">Últimos 90 dias</option><option value="">Todo o período</option></select>
@@ -622,11 +634,11 @@ async function pgLeads(el){
     leadsCache = data; desenha();
   };
   const filtrados = () => { const b = filtroLeads.busca.toLowerCase(), bd = soDigitos(b);
-    return leadsCache.filter(l=>!b || (l.nome||"").toLowerCase().includes(b) || (l.bairro||"").toLowerCase().includes(b) || (bd && soDigitos(l.telefone).includes(bd))); };
+    return leadsCache.filter(l=>!b || (l.nome||"").toLowerCase().includes(b) || (l.bairro||"").toLowerCase().includes(b) || (l.rua||"").toLowerCase().includes(b) || (bd && soDigitos(l.telefone).includes(bd))); };
   const desenha = () => {
     const ls = filtrados();
     $("#lCorpo").innerHTML = ls.length ? ls.map(l=>`<tr class="clic" data-id="${l.id}" tabindex="0">
-      <td class="num">${fmtData(l.criado_em)}</td><td><b>${esc(l.nome)}</b>${l.bairro?`<br><small style="color:var(--muted)">${esc(l.bairro)}</small>`:""}</td>
+      <td class="num">${fmtData(l.criado_em)}</td><td><b>${esc(l.nome)}</b>${l.bairro||l.rua?`<br><small style="color:var(--muted)">${esc([l.rua&&`${l.rua}, ${l.numero||"s/n"}`, l.bairro].filter(Boolean).join(" — "))}</small>`:""}</td>
       <td class="num">${esc(l.telefone)}</td><td>${esc(ORIGEM[l.origem]||l.origem)}</td><td class="dir num">${l.total!=null?brl(l.total):"—"}</td><td>${pill(l.status)}</td>
       <td class="dir"><a class="btn peq" href="${esc(linkWhats(l.telefone, `Olá, ${l.nome}! Aqui é da SCX Mix da Construção, sobre o seu orçamento.`))}" target="_blank" rel="noopener" data-zap>WhatsApp</a></td></tr>`).join("")
       : `<tr><td colspan="7" class="vazio">Nenhum lead encontrado com esses filtros.</td></tr>`;
@@ -647,9 +659,11 @@ function abrirLead(id, aoSalvar){
       <div><span>Recebido em</span><b class="num">${fmtData(l.criado_em)}</b></div>
       <div><span>WhatsApp</span><b class="num" style="user-select:all">${esc(l.telefone)}</b></div>
       <div><span>Origem</span><b>${esc(ORIGEM[l.origem]||l.origem)}</b></div>
-      ${l.bairro?`<div><span>Bairro</span><b>${esc(l.bairro)}</b></div>`:""}
     </div>
-    ${l.mensagem?`<div class="campo"><span class="rot">Mensagem</span><div class="info-caixa" style="white-space:pre-wrap">${esc(l.mensagem)}</div></div>`:""}
+    ${l.rua||l.bairro?`<div class="campo"><span class="rot">Endereço de entrega</span><div class="info-caixa barra-ferr"><b class="esp" style="user-select:all">${esc([l.rua&&`${l.rua}, nº ${l.numero||"s/n"}`, l.bairro].filter(Boolean).join(" — "))}${l.complemento?`<br><small style="color:var(--muted);font-weight:500">${esc(l.complemento)}</small>`:""}</b>
+      <a class="btn peq" href="${esc("https://www.google.com/maps/search/?api=1&query="+encodeURIComponent([l.rua,l.numero,l.bairro,"Campo Grande MS"].filter(Boolean).join(", ")))}" target="_blank" rel="noopener">Abrir no mapa</a></div></div>`:""}
+
+    ${l.mensagem?`<div class="campo"><span class="rot">${l.origem==="orcamento"?"Número do pedido":"Mensagem do cliente"}</span><div class="info-caixa" style="white-space:pre-wrap">${esc(l.origem==="orcamento"?l.mensagem.replace(/^Pedido nº /,""):l.mensagem)}</div></div>`:""}
     ${itens.length?`<div class="campo"><span class="rot">Itens do orçamento</span><div class="tabela"><table class="itens-lead"><thead><tr><th>Qtd</th><th>Produto</th><th class="dir">Unit.</th><th class="dir">Subtotal</th></tr></thead><tbody>
       ${itens.map(i=>`<tr><td class="num">${esc(i.qtd)}</td><td>${esc(i.nome)} <small style="color:var(--muted)">(${esc(i.unidade||"")})</small></td><td class="dir num">${brl(i.preco)}</td><td class="dir num">${brl((i.preco||0)*(i.qtd||1))}</td></tr>`).join("")}
       <tr><td colspan="3"><b>Total estimado</b></td><td class="dir num"><b>${brl(l.total)}</b></td></tr></tbody></table></div></div>`:""}
@@ -674,8 +688,8 @@ function abrirLead(id, aoSalvar){
 }
 function exportarCsv(ls){
   const cel = v => `"${String(v??"").replace(/"/g,'""')}"`;
-  const linhas = [["Data","Nome","WhatsApp","Bairro","Origem","Status","Total","Itens","Mensagem","Anotações"].map(cel).join(";")];
-  ls.forEach(l=>linhas.push([fmtData(l.criado_em), l.nome, l.telefone, l.bairro, ORIGEM[l.origem]||l.origem, STATUS[l.status]||l.status,
+  const linhas = [["Data","Nome","WhatsApp","Rua","Número","Bairro","Complemento","Origem","Status","Total","Itens","Mensagem","Anotações"].map(cel).join(";")];
+  ls.forEach(l=>linhas.push([fmtData(l.criado_em), l.nome, l.telefone, l.rua, l.numero, l.bairro, l.complemento, ORIGEM[l.origem]||l.origem, STATUS[l.status]||l.status,
     l.total!=null?fmtNum(l.total):"", (Array.isArray(l.itens)?l.itens:[]).map(i=>`${i.qtd}x ${i.nome}`).join(" | "), l.mensagem, l.observacao].map(cel).join(";")));
   const blob = new Blob(["﻿"+linhas.join("\r\n")], {type:"text/csv;charset=utf-8"});
   const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = `leads-scx-${new Date().toISOString().slice(0,10)}.csv`;
@@ -1049,26 +1063,35 @@ async function pgAparencia(el){
 
 /* =================== USUÁRIOS =================== */
 async function pgUsuarios(el){
-  const { data, error } = await sb.from("admins").select("*").order("criado_em");
-  if(error) throw error;
-  const eu = $("#usuarioEmail").textContent.toLowerCase();
-  el.innerHTML = `
+  const eu = meuEmail.toLowerCase();
+  const cartaoSenha = `
     <div class="cartao"><h2>Alterar minha senha</h2>
       <form id="fSenha" class="barra-ferr" style="align-items:end">
         <div class="campo" style="flex:1;min-width:200px"><label for="uSenha">Nova senha</label><input type="password" id="uSenha" autocomplete="new-password" minlength="8"></div>
         <div class="campo" style="flex:1;min-width:200px"><label for="uSenha2">Repita a nova senha</label><input type="password" id="uSenha2" autocomplete="new-password"></div>
         <button class="btn prim" type="submit">Alterar senha</button>
       </form>
-    </div>
-    <div class="cartao"><h2>Quem pode entrar no painel</h2>
-      <p class="sub">Para dar acesso a outra pessoa: 1) no Supabase, vá em <b>Authentication → Users → Add user</b> e crie o login com e-mail e senha; 2) adicione o mesmo e-mail aqui.</p>
-      <div class="lista-simples">${data.map(a=>`<div><span><b>${esc(a.email)}</b>${a.email.toLowerCase()===eu?' <small style="color:var(--muted)">(você)</small>':""}<br><small style="color:var(--muted)">desde ${fmtData(a.criado_em,false)}</small></span>
-        <button class="btn peq perigo" type="button" data-rm="${esc(a.email)}" ${a.email.toLowerCase()===eu?"disabled":""}>Remover</button></div>`).join("")}</div>
+    </div>`;
+  let data = [];
+  if(papel==="admin"){ const r = await sb.from("admins").select("*").order("criado_em"); if(r.error) throw r.error; data = r.data; }
+  const opPapel = sel => Object.entries(PAPEIS).map(([k,v])=>`<option value="${k}" ${k===sel?"selected":""}>${v}</option>`).join("");
+  el.innerHTML = cartaoSenha + (papel!=="admin" ? `<div class="info-caixa">Seu acesso é de <b>Editor de produtos</b>: você cadastra e altera produtos, preços e fotos. Para outras mudanças no site, fale com um administrador.</div>` : `
+    <div class="cartao"><h2>Usuários do painel</h2>
+      <p class="sub">Para dar acesso a alguém: 1) no Supabase, vá em <b>Authentication → Users → Add user</b>, crie o login com e-mail e senha e marque <b>Auto Confirm User</b>; 2) adicione o mesmo e-mail aqui e escolha o perfil.</p>
+      <div class="info-caixa" style="font-size:14px;margin-bottom:12px"><b>Administrador</b> vê e altera tudo: painel, leads, banners, produtos, departamentos, textos, aparência e usuários.<br><b>Editor de produtos</b> só acessa <b>Produtos e preços</b> (inclusive fotos) e a própria senha.</div>
+      <div class="tabela"><table style="min-width:520px"><thead><tr><th>E-mail</th><th>Perfil</th><th>Desde</th><th></th></tr></thead><tbody>
+      ${data.map(a=>{ const souEu = a.email.toLowerCase()===eu; return `<tr data-email="${esc(a.email)}">
+        <td><b>${esc(a.email)}</b>${souEu?' <small style="color:var(--muted)">(você)</small>':""}</td>
+        <td><select data-papel style="width:auto" ${souEu?"disabled title=\"Você não pode mudar o próprio perfil\"":""} aria-label="Perfil de ${esc(a.email)}">${opPapel(a.papel||"admin")}</select></td>
+        <td class="num">${fmtData(a.criado_em,false)}</td>
+        <td class="dir"><button class="btn peq perigo" type="button" data-rm ${souEu?"disabled":""}>Remover</button></td></tr>`; }).join("")}
+      </tbody></table></div>
       <form id="fAdm" class="barra-ferr" style="margin-top:14px;align-items:end">
-        <div class="campo" style="flex:1;min-width:220px"><label for="uNovo">E-mail do novo administrador</label><input type="email" id="uNovo" placeholder="nome@email.com"></div>
+        <div class="campo" style="flex:2;min-width:220px"><label for="uNovo">E-mail do novo usuário</label><input type="email" id="uNovo" placeholder="nome@email.com"></div>
+        <div class="campo" style="flex:1;min-width:180px"><label for="uPapel">Perfil</label><select id="uPapel">${opPapel("editor")}</select></div>
         <button class="btn prim" type="submit">Adicionar</button>
       </form>
-    </div>`;
+    </div>`);
   $("#fSenha").addEventListener("submit", async e => {
     e.preventDefault(); const s1=$("#uSenha").value, s2=$("#uSenha2").value;
     if(s1.length<8) return toast("A senha precisa ter pelo menos 8 caracteres.", true);
@@ -1076,21 +1099,33 @@ async function pgUsuarios(el){
     const { error } = await sb.auth.updateUser({ password: s1 }); if(error) return falha(error,"Erro");
     e.target.reset(); toast("Senha alterada.");
   });
+  if(papel!=="admin") return;
   $("#fAdm").addEventListener("submit", async e => {
-    e.preventDefault(); const em=$("#uNovo").value.trim().toLowerCase();
+    e.preventDefault(); const em=$("#uNovo").value.trim().toLowerCase(), pp=$("#uPapel").value;
     if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em)) return toast("E-mail inválido.", true);
-    const { error } = await sb.from("admins").insert({ email: em }); if(error) return falha(error,"Erro");
-    toast("Administrador adicionado."); pgUsuarios(el);
+    if(data.some(a=>a.email.toLowerCase()===em)) return toast("Esse e-mail já tem acesso. Mude o perfil na lista.", true);
+    const { error } = await sb.from("admins").insert({ email: em, papel: pp }); if(error) return falha(error,"Erro");
+    toast(`${em} adicionado como ${PAPEIS[pp]}.`); pgUsuarios(el);
   });
+  el.onchange = async e => {
+    const s = e.target.closest("[data-papel]"); if(!s) return;
+    const em = s.closest("tr").dataset.email, antes = (data.find(a=>a.email===em)||{}).papel;
+    const { error } = await sb.from("admins").update({ papel: s.value }).eq("email", em);
+    if(error){ s.value = antes; return falha(error,"Erro"); }
+    toast(`${em} agora é ${PAPEIS[s.value]}.`); pgUsuarios(el);
+  };
   el.onclick = async e => {
     const b = e.target.closest("[data-rm]"); if(!b) return;
-    if(!await confirmar(`Remover o acesso de ${b.dataset.rm} ao painel?`, "Remover")) return;
-    const { error } = await sb.from("admins").delete().eq("email", b.dataset.rm); if(error) return falha(error,"Erro");
+    const em = b.closest("tr").dataset.email;
+    if(!await confirmar(`Remover o acesso de ${em} ao painel? O login continua existindo no Supabase, mas não entra mais aqui.`, "Remover")) return;
+    const { error } = await sb.from("admins").delete().eq("email", em); if(error) return falha(error,"Erro");
     toast("Acesso removido."); pgUsuarios(el);
   };
 }
 
 /* ---------- início ---------- */
+SCX.instalarApp({ id:"painel", icone:"assets/painel-192.png", titulo:"Instale o Painel SCX",
+  texto:"Veja os leads e altere preços direto da tela do celular ou do computador.", atraso:1500, mostrarNoIos:true, diasAdiar:7 });
 if(!sb){ mostrar("vConfig"); return; }
 if(/type=recovery/.test(location.hash)) modoRecuperar = true;
 sb.auth.onAuthStateChange((evento) => {

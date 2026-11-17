@@ -1,0 +1,17 @@
+{
+  "id": "./admin.html",
+  "name": "Painel SCX Mix",
+  "short_name": "Painel SCX",
+  "description": "Painel de gestão do site da SCX Mix da Construção.",
+  "lang": "pt-BR",
+  "start_url": "./admin.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#1f2170",
+  "theme_color": "#1f2170",
+  "icons": [
+    { "src": "assets/painel-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "assets/painel-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "assets/painel-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

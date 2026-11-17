@@ -1,0 +1,17 @@
+{
+  "id": "./",
+  "name": "SCX Mix da Construção",
+  "short_name": "SCX Mix",
+  "description": "Materiais de construção e utilidades. Ofertas e orçamento pelo WhatsApp.",
+  "lang": "pt-BR",
+  "start_url": "./?app=1",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#2e3192",
+  "theme_color": "#2e3192",
+  "icons": [
+    { "src": "assets/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "assets/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "assets/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

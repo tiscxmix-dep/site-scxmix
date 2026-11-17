@@ -14,6 +14,7 @@ Desenvolvido por CRG - Soluções Tecnológicas.
 | `supabase/schema.sql` | Cria o banco de dados, as regras de segurança e o espaço das fotos |
 | `CNAME` | Diz ao GitHub que o site usa www.scxmix.com.br |
 | `robots.txt` / `sitemap.xml` | Ajudam o Google a achar o site (e esconder o painel) |
+| `manifest.webmanifest` / `admin.webmanifest` / `sw.js` | Fazem o site e o painel virarem aplicativos instaláveis no celular e no computador |
 
 **No painel você consegue:**
 - **Painel:** visitas, leads, conversão e valor em orçamentos, com gráficos por dia, últimos leads, produtos mais pedidos e de onde vêm as visitas.
@@ -23,7 +24,9 @@ Desenvolvido por CRG - Soluções Tecnológicas.
 - **Departamentos:** nome, ícone, ordem e mostrar ou esconder.
 - **Textos e contato:** WhatsApp que recebe os pedidos, horário, endereço, Instagram, desconto no PIX, faixa de avisos, vantagens, anúncios, passos e rodapé.
 - **Aparência:** logo, cores e quais seções aparecem no site.
-- **Acesso e senha:** troque sua senha e dê acesso a outras pessoas.
+- **Usuários e senha:** troque sua senha e dê acesso a outras pessoas com um de dois perfis:
+  - **Administrador:** vê e altera tudo.
+  - **Editor de produtos:** só acessa *Produtos e preços* (com fotos) e a própria senha. Não vê leads, painel, banners, textos nem usuários, e o banco de dados bloqueia isso também, não só a tela.
 
 As fotos enviadas pelo painel são reduzidas automaticamente antes de subir, para o site continuar rápido.
 
@@ -45,7 +48,7 @@ As fotos enviadas pelo painel são reduzidas automaticamente antes de subir, par
 2. Informe seu e-mail e uma senha, e marque **Auto Confirm User**.
 3. Volte ao **SQL Editor** e rode esta linha, trocando pelo seu e-mail:
    ```sql
-   insert into public.admins (email) values ('seu-email@exemplo.com');
+   insert into public.admins (email, papel) values ('seu-email@exemplo.com', 'admin');
    ```
 4. Por segurança, desligue o cadastro aberto: **Authentication → Sign In / Providers → Email**, em "Allow new users to sign up", **desligue**. Os próximos acessos você libera pelo painel.
 
@@ -95,7 +98,27 @@ Abra o `admin.html`, entre com seu e-mail e senha e clique em **Carregar conteú
 
 ---
 
+## Atualizando uma instalação que já existe
+Quando receber uma versão nova do `schema.sql`, cole o arquivo inteiro no **SQL Editor** e clique em **Run** de novo. Nada é apagado: só entram as novidades. Os usuários que já existiam continuam como Administrador.
+
+## Aplicativo
+O site e o painel podem ser instalados como aplicativo, com ícone próprio, tela cheia e abrindo mesmo com internet fraca.
+- **Android / Chrome / Edge:** aparece o convite "Instalar". No site, o convite aparece depois de alguns segundos, e também tem o link *Instalar o app no celular* no rodapé.
+- **iPhone:** no Safari, toque em **Compartilhar → Adicionar à Tela de Início**. O painel mostra essa dica sozinho.
+- O painel tem um ícone diferente (com a faixa "PAINEL"), então dá para ter os dois no mesmo celular.
+
+## Dar acesso a um funcionário
+1. No Supabase: **Authentication → Users → Add user → Create new user**. Informe o e-mail e uma senha provisória e marque **Auto Confirm User**.
+2. No painel: **Usuários e senha**. Digite o mesmo e-mail, escolha **Editor de produtos** e clique em **Adicionar**.
+3. Passe o e-mail e a senha provisória para a pessoa. Ela troca a senha em **Minha senha**.
+
+Para tirar o acesso, clique em **Remover** na lista.
+
 ## Dúvidas comuns
+
+**Mandei o link no WhatsApp e a prévia ainda aparece com a logo antiga.**
+O WhatsApp guarda a prévia de cada link por um tempo. Envie `https://www.scxmix.com.br/?v=2` para forçar uma prévia nova. Os próximos links já saem com a imagem azul.
+
 
 **O site mostra os produtos de exemplo mesmo depois de configurar.**
 Confira o `config.js`. Enquanto o banco estiver vazio, o site mostra o exemplo de propósito, para não ficar em branco. Faça o passo 7.

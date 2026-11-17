@@ -7,13 +7,24 @@
 <meta name="description" content="SCX Mix da Construção — materiais de construção e utilidades em Campo Grande - MS. Ofertas, orçamento pelo WhatsApp e entrega rápida.">
 <meta property="og:title" content="SCX Mix da Construção">
 <meta property="og:description" content="Materiais de construção e utilidades. Peça seu orçamento pelo WhatsApp.">
-<meta property="og:image" content="https://www.scxmix.com.br/assets/logo.png">
+<meta property="og:image" content="https://www.scxmix.com.br/assets/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Logo SCX Mix da Construção">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:site_name" content="SCX Mix da Construção">
 <meta property="og:url" content="https://www.scxmix.com.br/">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="pt_BR">
 <link rel="canonical" href="https://www.scxmix.com.br/">
 <meta name="theme-color" content="#2e3192">
 <link rel="icon" href="assets/favicon.png">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="SCX Mix">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,500..900&family=Barlow:wght@400;500;600;700&display=swap">
@@ -336,6 +347,7 @@ aside.orc.on{transform:none}
       <p id="rHorario"></p>
       <p id="rEndereco"></p>
       <p id="rInsta" hidden></p>
+      <p id="rApp" hidden><a href="#" id="linkApp">📲 Instalar o app no celular</a></p>
     </div>
     <div>
       <h4>Departamentos</h4>
@@ -361,12 +373,18 @@ aside.orc.on{transform:none}
       <h4>Seus dados para o atendimento</h4>
       <div class="campo"><label for="oNome">Nome</label><input id="oNome" autocomplete="name" maxlength="80"></div>
       <div class="campo"><label for="oTel">WhatsApp</label><input id="oTel" type="tel" inputmode="tel" autocomplete="tel" placeholder="(67) 9 9999-9999" maxlength="20"></div>
-      <div class="campo"><label for="oBairro">Bairro para entrega (opcional)</label><input id="oBairro" maxlength="80"></div>
+      <h4 style="margin-top:6px">Endereço de entrega</h4>
+      <div class="campo"><label for="oRua">Rua / avenida</label><input id="oRua" autocomplete="address-line1" maxlength="120" placeholder="Ex.: Rua Ceará"></div>
+      <div class="lin" style="display:grid;grid-template-columns:110px 1fr;gap:12px">
+        <div class="campo"><label for="oNum">Número</label><input id="oNum" inputmode="numeric" maxlength="20" placeholder="123"></div>
+        <div class="campo"><label for="oBairro">Bairro</label><input id="oBairro" maxlength="80" placeholder="Ex.: Coophavila II"></div>
+      </div>
+      <div class="campo"><label for="oCompl">Complemento ou ponto de referência (opcional)</label><input id="oCompl" autocomplete="address-line2" maxlength="120" placeholder="Ex.: casa de esquina, portão azul"></div>
       <p class="erro" id="oErro" hidden></p>
       <button class="btn-zap" type="submit" id="oEnviar">Enviar orçamento pelo WhatsApp</button>
       <small>O orçamento chega pronto no nosso WhatsApp. Confirmamos preço, estoque e entrega por lá.</small>
     </form>
-    <div class="sucesso" id="oOk" hidden>Orçamento enviado! Se o WhatsApp não abriu, chame a gente no <b class="num" id="oOkTel"></b>.</div>
+    <div class="sucesso" id="oOk" hidden>Orçamento <b id="oCod"></b> enviado! Se o WhatsApp não abriu, chame a gente no <b class="num" id="oOkTel"></b> e informe esse número.</div>
   </div>
 </aside>
 
@@ -651,6 +669,9 @@ function fecha(){ document.querySelectorAll(".orc.on,.modal.on").forEach(el=>{el
 $("#abrirOrc").onclick = ()=>abre("#orc");
 
 /* envio de lead + WhatsApp */
+const dominio = () => (/^(localhost|127\.)/.test(location.hostname) || !location.hostname) ? "www.scxmix.com.br" : location.hostname;
+const agora = () => { const d=new Date(); return d.toLocaleDateString("pt-BR",{day:"2-digit",month:"2-digit"})+" às "+d.toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"}); };
+const codigoPedido = () => "SCX-" + Date.now().toString(36).slice(-5).toUpperCase();
 function validar(nome, tel){
   if(nome.trim().length < 2) return "Informe seu nome.";
   const d = soDigitos(tel); if(d.length < 10 || d.length > 13) return "Informe um WhatsApp com DDD, por exemplo (67) 9 9999-9999.";
@@ -659,7 +680,13 @@ function validar(nome, tel){
 async function salvarLead(dados){
   if(!sb) return;
   const t = new Promise(r=>setTimeout(()=>r({error:{message:"tempo esgotado"}}),4000));
-  const r = await Promise.race([sb.from("leads").insert(dados), t]);
+  let r = await Promise.race([sb.from("leads").insert(dados), t]);
+  if(r && r.error && /rua|numero|complemento|column/i.test(r.error.message||"") && dados.rua!==undefined){
+    // banco ainda sem as colunas de endereço (schema.sql antigo): guarda o endereço no texto do lead
+    const { rua, numero, complemento, ...resto } = dados;
+    resto.mensagem = [resto.mensagem, `Endereço: ${rua}, nº ${numero} — ${resto.bairro||""}${complemento?` (${complemento})`:""}`].filter(Boolean).join("\n");
+    r = await Promise.race([sb.from("leads").insert(resto), t]);
+  }
   if(r && r.error) console.warn("Lead não salvo:", r.error.message||r.error);
 }
 async function enviar(dados, mensagem, botao){
@@ -674,27 +701,67 @@ async function enviar(dados, mensagem, botao){
 $("#formOrc").addEventListener("submit", async e=>{
   e.preventDefault();
   const nome=$("#oNome").value.trim(), tel=$("#oTel").value.trim(), bairro=$("#oBairro").value.trim();
-  const err = validar(nome, tel); $("#oErro").hidden=!err; $("#oErro").textContent=err; if(err) return;
+  const rua=$("#oRua").value.trim(), numero=$("#oNum").value.trim(), compl=$("#oCompl").value.trim();
+  const err = validar(nome, tel) || (rua.length<3 ? "Informe a rua para a entrega." : !numero ? "Informe o número da casa (ou S/N se não tiver)." : bairro.length<2 ? "Informe o bairro para a entrega." : ""); $("#oErro").hidden=!err; $("#oErro").textContent=err; if(err) return;
   const its = itensOrc(); if(!its.length) return;
-  const linhas = its.map(({p,q})=>`• ${q}x ${p.nome} (${p.unidade}) — ${brl(p.preco*q)}`);
-  const msg = `Olá, SCX Mix! Sou ${nome} e gostaria de um orçamento:\n\n${linhas.join("\n")}\n\nTotal estimado: ${brl(soma())}${bairro?`\nEntrega no bairro: ${bairro}`:""}`;
-  await enviar({ nome, telefone: tel, bairro: bairro||null, origem:"orcamento",
+  const cod = codigoPedido();
+  const linhas = its.map(({p,q})=>`▪️ ${q}x ${p.nome} (${p.unidade}) — ${brl(p.preco*q)}`);
+  const msg = [
+    `🛒 *NOVO PEDIDO DE ORÇAMENTO*`,
+    `🌐 _Pedido feito pelo site ${dominio()}_`,
+    `🔖 Nº ${cod} · ${agora()}`,
+    ``,
+    `👤 *Cliente:* ${nome}`,
+    `📱 *WhatsApp:* ${tel}`,
+    ``,
+    `📍 *Endereço de entrega:*`,
+    `${rua}, nº ${numero} — ${bairro}`,
+    compl ? `_${compl}_` : null,
+    ``,
+    `*Itens:*`,
+    ...linhas,
+    ``,
+    `💰 *Total estimado:* ${brl(soma())}`,
+    temPix() ? `💠 No PIX: ${brl(precoPix(soma()))}` : null,
+    ``,
+    `_Aguardo a confirmação de preço, estoque e entrega._`
+  ].filter(l=>l!==null).join("\n");
+  await enviar({ nome, telefone: tel, bairro, rua, numero, complemento: compl||null, origem:"orcamento", mensagem: `Pedido nº ${cod}`,
     itens: its.map(({p,q})=>({id:p.id, nome:p.nome, unidade:p.unidade, preco:Number(p.preco), qtd:q})), total: Number(soma().toFixed(2)) }, msg, $("#oEnviar"));
+  $("#oCod").textContent = cod;
   orc={}; salva(); $("#formOrc").hidden=true; $("#oOk").hidden=false; atualizaOrc();
-  try{ localStorage.setItem("scx-cliente", JSON.stringify({nome, tel, bairro})); }catch(e){}
+  try{ localStorage.setItem("scx-cliente", JSON.stringify({nome, tel, bairro, rua, numero, compl})); }catch(e){}
 });
+$("#formOrc").addEventListener("input", ()=>{ $("#oErro").hidden=true; });
+$("#formContato").addEventListener("input", ()=>{ $("#cErro").hidden=true; });
 $("#formContato").addEventListener("submit", async e=>{
   e.preventDefault();
   const nome=$("#cNome").value.trim(), tel=$("#cTel").value.trim(), m=$("#cMsg").value.trim();
   const err = validar(nome, tel) || (m.length<3 ? "Conte o que você precisa." : ""); $("#cErro").hidden=!err; $("#cErro").textContent=err; if(err) return;
-  await enviar({ nome, telefone: tel, mensagem: m, origem:"contato" }, `Olá, SCX Mix! Sou ${nome}.\n\n${m}`, $("#cEnviar"));
+  const msg = [
+    `🏗️ *NOVO PEDIDO DE ORÇAMENTO DE OBRA*`,
+    `🌐 _Mensagem enviada pelo site ${dominio()}_`,
+    `🕒 ${agora()}`,
+    ``,
+    `👤 *Cliente:* ${nome}`,
+    `📱 *WhatsApp:* ${tel}`,
+    ``,
+    `📝 *O que preciso:*`,
+    m
+  ].join("\n");
+  await enviar({ nome, telefone: tel, mensagem: m, origem:"contato" }, msg, $("#cEnviar"));
   $("#cOk").hidden=false; $("#formContato").reset();
   try{ localStorage.setItem("scx-cliente", JSON.stringify({nome, tel})); }catch(e){}
 });
-try{ const c=JSON.parse(localStorage.getItem("scx-cliente")||"null"); if(c){ $("#oNome").value=$("#cNome").value=c.nome||""; $("#oTel").value=$("#cTel").value=c.tel||""; $("#oBairro").value=c.bairro||""; } }catch(e){}
+try{ const c=JSON.parse(localStorage.getItem("scx-cliente")||"null"); if(c){ $("#oNome").value=$("#cNome").value=c.nome||""; $("#oTel").value=$("#cTel").value=c.tel||""; $("#oBairro").value=c.bairro||""; $("#oRua").value=c.rua||""; $("#oNum").value=c.numero||""; $("#oCompl").value=c.compl||""; } }catch(e){}
 
 carregar();
 registrarAcesso();
+const app = SCX.instalarApp({ id:"site", icone:"assets/icon-192.png", titulo:"Baixe o app da SCX Mix",
+  texto:"Ofertas e orçamento a um toque, direto da tela do celular.", atraso:20000, diasAdiar:14,
+  aoDisponivel: ()=>{ $("#rApp").hidden=false; } });
+if(app && app.disponivel) $("#rApp").hidden=false;
+$("#linkApp").onclick = e=>{ e.preventDefault(); app && app.abrir(); };
 })();
 </script>
 </body>

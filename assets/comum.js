@@ -126,5 +126,38 @@
     catch (e) { console.error("Supabase:", e); return null; }
   }
 
-  window.SCX = { ICONES, NOMES_ICONES, DADOS_INICIAIS, esc, brl, urlSegura, soDigitos, linkWhats, mesclarSite, conectar };
+  /* ---------- aplicativo (PWA): registra e convida para instalar ---------- */
+  function instalarApp(opcoes) {
+    if ("serviceWorker" in navigator && location.protocol !== "file:") {
+      navigator.serviceWorker.register("sw.js").catch(() => {});
+    }
+    const chave = "scx-instalar-" + opcoes.id;
+    const standalone = matchMedia("(display-mode: standalone)").matches || navigator.standalone;
+    if (standalone) return;
+    let adiado = false;
+    try { adiado = Date.now() < Number(localStorage.getItem(chave) || 0); } catch (e) {}
+    const ios = /iphone|ipad|ipod/i.test(navigator.userAgent) && !/crios|fxios/i.test(navigator.userAgent);
+    let evento = null;
+    const css = document.createElement("style");
+    css.textContent = `.scx-inst{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(14px + env(safe-area-inset-bottom,0px));z-index:95;width:min(520px,calc(100% - 24px));background:#1f2170;color:#fff;border-radius:14px;box-shadow:0 10px 30px rgba(0,0,0,.3);display:flex;gap:12px;align-items:center;padding:12px 14px;font:15px/1.35 "Barlow",system-ui,sans-serif}
+      .scx-inst img{width:44px;height:44px;border-radius:10px;flex:none}.scx-inst div{flex:1;min-width:0}.scx-inst b{display:block}.scx-inst small{color:#d7d9ff}
+      .scx-inst button{border:0;border-radius:8px;padding:8px 12px;font:inherit;font-weight:700;cursor:pointer}.scx-inst .s{background:#ffe814;color:#1f2170}.scx-inst .n{background:transparent;color:#d7d9ff;padding:8px 6px}`;
+    document.head.appendChild(css);
+    function mostrar() {
+      if (adiado || document.querySelector(".scx-inst")) return;
+      const el = document.createElement("div"); el.className = "scx-inst"; el.setAttribute("role", "dialog");
+      el.innerHTML = `<img src="${opcoes.icone}" alt=""><div><b>${opcoes.titulo}</b><small>${ios ? 'No Safari, toque em <b style="display:inline">Compartilhar</b> e depois em <b style="display:inline">Adicionar à Tela de Início</b>.' : opcoes.texto}</small></div>${ios ? "" : '<button class="s" type="button">Instalar</button>'}<button class="n" type="button" aria-label="Agora não">${ios ? "Ok" : "Agora não"}</button>`;
+      document.body.appendChild(el);
+      const fechar = (dias) => { el.remove(); try { localStorage.setItem(chave, String(Date.now() + dias * 864e5)); } catch (e) {} };
+      el.querySelector(".n").onclick = () => fechar(opcoes.diasAdiar || 7);
+      const s = el.querySelector(".s");
+      if (s) s.onclick = async () => { if (!evento) return fechar(1); evento.prompt(); const r = await evento.userChoice.catch(() => ({})); evento = null; fechar(r.outcome === "accepted" ? 365 : (opcoes.diasAdiar || 7)); };
+    }
+    window.addEventListener("beforeinstallprompt", e => { e.preventDefault(); evento = e; setTimeout(mostrar, opcoes.atraso || 0); if (opcoes.aoDisponivel) opcoes.aoDisponivel(); });
+    window.addEventListener("appinstalled", () => { const el = document.querySelector(".scx-inst"); if (el) el.remove(); try { localStorage.setItem(chave, String(Date.now() + 365 * 864e5)); } catch (e) {} });
+    if (ios && opcoes.mostrarNoIos) setTimeout(mostrar, opcoes.atraso || 0);
+    return { abrir() { adiado = false; if (evento || ios) mostrar(); }, get disponivel() { return !!evento || ios; } };
+  }
+
+  window.SCX = { instalarApp, ICONES, NOMES_ICONES, DADOS_INICIAIS, esc, brl, urlSegura, soDigitos, linkWhats, mesclarSite, conectar };
 })();
