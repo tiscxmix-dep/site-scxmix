@@ -73,33 +73,33 @@
       { id: "utilidades", nome: "Utilidades", icone: "utilidades", ordem: 8, ativo: true }
     ],
     produtos: [
-      { id: 1, nome: "Cimento CP II 50 kg", categoria: "cimento", unidade: "saco", preco: 36.90, preco_de: 42.90, destaque: true },
-      { id: 2, nome: "Argamassa AC-I 20 kg", categoria: "cimento", unidade: "saco", preco: 14.90, preco_de: 17.50, destaque: true },
-      { id: 3, nome: "Cal hidratada 20 kg", categoria: "cimento", unidade: "saco", preco: 18.90 },
-      { id: 4, nome: "Tijolo baiano 8 furos", categoria: "tijolos", unidade: "milheiro", preco: 890.00, preco_de: 990.00, destaque: true },
-      { id: 5, nome: "Bloco de concreto 14×19×39", categoria: "tijolos", unidade: "unid.", preco: 3.40 },
-      { id: 6, nome: "Tubo PVC soldável 25 mm 6 m", categoria: "hidraulica", unidade: "barra", preco: 24.90, destaque: true },
-      { id: 7, nome: "Caixa d'água 1000 L", categoria: "hidraulica", unidade: "unid.", preco: 449.00, preco_de: 519.00, destaque: true },
-      { id: 8, nome: "Torneira de jardim metal ½\"", categoria: "hidraulica", unidade: "unid.", preco: 22.90 },
-      { id: 9, nome: "Cabo flexível 2,5 mm rolo 100 m", categoria: "eletrica", unidade: "rolo", preco: 229.00, preco_de: 259.00, destaque: true },
-      { id: 10, nome: "Tomada 2P+T 10 A", categoria: "eletrica", unidade: "unid.", preco: 9.90 },
-      { id: 11, nome: "Lâmpada LED 12 W", categoria: "eletrica", unidade: "unid.", preco: 7.90, destaque: true },
-      { id: 12, nome: "Tinta acrílica premium 18 L", categoria: "tintas", unidade: "lata", preco: 304.00, preco_de: 379.00, destaque: true },
-      { id: 13, nome: "Massa corrida PVA 25 kg", categoria: "tintas", unidade: "balde", preco: 69.90 },
-      { id: 14, nome: "Rolo de lã 23 cm com cabo", categoria: "tintas", unidade: "unid.", preco: 24.90 },
-      { id: 15, nome: "Carrinho de mão 60 L", categoria: "ferramentas", unidade: "unid.", preco: 239.00, preco_de: 279.00, destaque: true },
-      { id: 16, nome: "Colher de pedreiro 8\"", categoria: "ferramentas", unidade: "unid.", preco: 19.90 },
-      { id: 17, nome: "Trena 5 m", categoria: "ferramentas", unidade: "unid.", preco: 16.90 },
-      { id: 18, nome: "Piso cerâmico 60×60 acetinado", categoria: "pisos", unidade: "m²", preco: 39.90, preco_de: 49.90, destaque: true },
-      { id: 19, nome: "Rejunte flexível 1 kg", categoria: "pisos", unidade: "pacote", preco: 8.90 },
-      { id: 20, nome: "Balde plástico 12 L", categoria: "utilidades", unidade: "unid.", preco: 9.90, destaque: true },
-      { id: 21, nome: "Mangueira de jardim 20 m", categoria: "utilidades", unidade: "unid.", preco: 59.90 },
-      { id: 22, nome: "Vassoura de pelo 40 cm", categoria: "utilidades", unidade: "unid.", preco: 21.90 }
+      { id: 1, nome: "Cimento CP II 50 kg", categoria: "cimento", unidade: "saco", preco: 0, destaque: true },
+      { id: 2, nome: "Argamassa AC-I 20 kg", categoria: "cimento", unidade: "saco", preco: 0, destaque: true },
+      { id: 3, nome: "Cal hidratada 20 kg", categoria: "cimento", unidade: "saco", preco: 0 },
+      { id: 4, nome: "Tijolo baiano 8 furos", categoria: "tijolos", unidade: "milheiro", preco: 0, destaque: true },
+      { id: 5, nome: "Bloco de concreto 14×19×39", categoria: "tijolos", unidade: "unid.", preco: 0 },
+      { id: 6, nome: "Tubo PVC soldável 25 mm 6 m", categoria: "hidraulica", unidade: "barra", preco: 0, destaque: true },
+      { id: 7, nome: "Caixa d'água 1000 L", categoria: "hidraulica", unidade: "unid.", preco: 0, destaque: true },
+      { id: 8, nome: "Torneira de jardim metal ½\"", categoria: "hidraulica", unidade: "unid.", preco: 0 },
+      { id: 9, nome: "Cabo flexível 2,5 mm rolo 100 m", categoria: "eletrica", unidade: "rolo", preco: 0, destaque: true },
+      { id: 10, nome: "Tomada 2P+T 10 A", categoria: "eletrica", unidade: "unid.", preco: 0 },
+      { id: 11, nome: "Lâmpada LED 12 W", categoria: "eletrica", unidade: "unid.", preco: 0, destaque: true },
+      { id: 12, nome: "Tinta acrílica premium 18 L", categoria: "tintas", unidade: "lata", preco: 0, destaque: true },
+      { id: 13, nome: "Massa corrida PVA 25 kg", categoria: "tintas", unidade: "balde", preco: 0 },
+      { id: 14, nome: "Rolo de lã 23 cm com cabo", categoria: "tintas", unidade: "unid.", preco: 0 },
+      { id: 15, nome: "Carrinho de mão 60 L", categoria: "ferramentas", unidade: "unid.", preco: 0, destaque: true },
+      { id: 16, nome: "Colher de pedreiro 8\"", categoria: "ferramentas", unidade: "unid.", preco: 0 },
+      { id: 17, nome: "Trena 5 m", categoria: "ferramentas", unidade: "unid.", preco: 0 },
+      { id: 18, nome: "Piso cerâmico 60×60 acetinado", categoria: "pisos", unidade: "m²", preco: 0, destaque: true },
+      { id: 19, nome: "Rejunte flexível 1 kg", categoria: "pisos", unidade: "pacote", preco: 0 },
+      { id: 20, nome: "Balde plástico 12 L", categoria: "utilidades", unidade: "unid.", preco: 0, destaque: true },
+      { id: 21, nome: "Mangueira de jardim 20 m", categoria: "utilidades", unidade: "unid.", preco: 0 },
+      { id: 22, nome: "Vassoura de pelo 40 cm", categoria: "utilidades", unidade: "unid.", preco: 0 }
     ].map((p, i) => Object.assign({ preco_de: null, destaque: false, ativo: true, descricao: "", foto_url: "", ordem: i }, p)),
     banners: [
-      { id: 1, ordem: 1, ativo: true, estilo: "s1", etiqueta: "Oferta da semana", titulo: "Cimento CP II", destaque: "50 kg", subtitulo: "Leve 10 sacos ou mais e garanta o menor preço. Entrega no mesmo dia em Campo Grande.", preco_rotulo: "a partir de", preco: "36,90", preco_sufixo: "o saco", botao_texto: "Adicionar ao orçamento", botao_acao: "prod:1", imagem_url: "", imagem_mobile_url: "" },
-      { id: 2, ordem: 2, ativo: true, estilo: "s2", etiqueta: "Tintas", titulo: "Renove a casa com", destaque: "até 20% off", subtitulo: "Látex PVA e acrílica premium, rolos, pincéis e massa corrida com preço especial.", preco_rotulo: "Acrílica 18 L", preco: "289", preco_sufixo: "no PIX", botao_texto: "Ver tintas", botao_acao: "cat:tintas", imagem_url: "", imagem_mobile_url: "" },
-      { id: 3, ordem: 3, ativo: true, estilo: "s3", etiqueta: "Utilidades", titulo: "Tudo para casa,", destaque: "do balde à mangueira", subtitulo: "Utilidades domésticas, organização e limpeza no mesmo lugar da sua obra.", preco_rotulo: "Balde 12 L", preco: "9,90", preco_sufixo: "cada", botao_texto: "Ver utilidades", botao_acao: "cat:utilidades", imagem_url: "", imagem_mobile_url: "" }
+      { id: 1, ordem: 1, ativo: true, estilo: "s1", etiqueta: "Oferta da semana", titulo: "Cimento CP II", destaque: "50 kg", subtitulo: "Leve 10 sacos ou mais e garanta o menor preço. Entrega no mesmo dia em Campo Grande.", preco_rotulo: "", preco: "", preco_sufixo: "", botao_texto: "Adicionar ao orçamento", botao_acao: "prod:1", imagem_url: "", imagem_mobile_url: "" },
+      { id: 2, ordem: 2, ativo: true, estilo: "s2", etiqueta: "Tintas", titulo: "Renove a casa com", destaque: "até 20% off", subtitulo: "Látex PVA e acrílica premium, rolos, pincéis e massa corrida com preço especial.", preco_rotulo: "", preco: "", preco_sufixo: "", botao_texto: "Ver tintas", botao_acao: "cat:tintas", imagem_url: "", imagem_mobile_url: "" },
+      { id: 3, ordem: 3, ativo: true, estilo: "s3", etiqueta: "Utilidades", titulo: "Tudo para casa,", destaque: "do balde à mangueira", subtitulo: "Utilidades domésticas, organização e limpeza no mesmo lugar da sua obra.", preco_rotulo: "", preco: "", preco_sufixo: "", botao_texto: "Ver utilidades", botao_acao: "cat:utilidades", imagem_url: "", imagem_mobile_url: "" }
     ]
   };
 

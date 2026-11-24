@@ -150,6 +150,9 @@ section{padding-block:28px}
 .prod h3 button:hover{text-decoration:underline}
 .de{font-size:13px;color:var(--muted);text-decoration:line-through;min-height:19px}
 .por{font-family:var(--display);font-stretch:110%;font-weight:900;font-size:26px;color:var(--fg);line-height:1}
+.por.consulta,.consulta{font-family:var(--body);font-stretch:100%;font-size:17px;font-weight:700;color:var(--azul)}
+:root[data-theme="dark"] .consulta{color:var(--amarelo)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .consulta{color:var(--amarelo)}}
 .por small{font-family:var(--body);font-size:13px;font-weight:500;color:var(--muted)}
 .pix{font-size:13px;color:var(--verde);font-weight:600}
 .add{margin-top:8px;border:0;background:var(--amarelo);color:var(--azul-esc);font-weight:800;border-radius:6px;padding:10px}
@@ -578,8 +581,10 @@ function executarAcao(a, el){
 /* vitrine */
 const norm = s => String(s||"").normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase();
 function filtrar(c){ filtro=c; termo=""; $("#busca").value=""; renderVitrine(); $("#ofertas").scrollIntoView({behavior:"smooth"}); }
+// preço zero = "sob consulta" (produto ainda sem preço cadastrado)
+function temPreco(p){ return Number(p.preco) > 0; }
 function cardProduto(p){
-  const off = p.preco_de && Number(p.preco_de)>Number(p.preco) ? Math.round((1-p.preco/p.preco_de)*100) : 0;
+  const off = temPreco(p) && p.preco_de && Number(p.preco_de)>Number(p.preco) ? Math.round((1-p.preco/p.preco_de)*100) : 0;
   const foto = urlSegura(p.foto_url) ? `<img src="${esc(p.foto_url)}" alt="" loading="lazy">` : iconeCat(p.categoria);
   return `<article class="prod">
     <button class="foto" type="button" data-ver="${esc(p.id)}" aria-label="Ver ${esc(p.nome)}">${off?`<span class="selo num">-${off}%</span>`:""}${foto}</button>
@@ -587,9 +592,9 @@ function cardProduto(p){
       <span class="tag">${esc(nomeCat(p.categoria))}</span>
       <h3><button type="button" data-ver="${esc(p.id)}">${esc(p.nome)}</button></h3>
       <span class="de num">${off?"de "+brl(p.preco_de):""}</span>
-      <span class="por num">${brl(p.preco)} <small>/${esc(p.unidade)}</small></span>
-      ${temPix()?`<span class="pix num">${brl(precoPix(p.preco))} no PIX</span>`:""}
-      <button class="add" type="button" data-add="${esc(p.id)}">Adicionar</button>
+      ${temPreco(p) ? `<span class="por num">${brl(p.preco)} <small>/${esc(p.unidade)}</small></span>
+      ${temPix()?`<span class="pix num">${brl(precoPix(p.preco))} no PIX</span>`:""}` : `<span class="por consulta">Preço sob consulta</span><span class="pix" style="color:var(--muted)">vendido por ${esc(p.unidade)}</span>`}
+      <button class="add" type="button" data-add="${esc(p.id)}">${temPreco(p)?"Adicionar":"Pedir orçamento"}</button>
     </div></article>`;
 }
 function renderVitrine(){
@@ -612,8 +617,8 @@ function verProduto(id){
   $("#mFoto").innerHTML = urlSegura(p.foto_url) ? `<img src="${esc(p.foto_url)}" alt="${esc(p.nome)}">` : iconeCat(p.categoria);
   $("#mCat").textContent = nomeCat(p.categoria); $("#mNome").textContent = p.nome;
   $("#mDe").textContent = off ? "de "+brl(p.preco_de) : "";
-  $("#mPor").innerHTML = `${brl(p.preco)} <small>/${esc(p.unidade)}</small>`;
-  $("#mPix").textContent = temPix() ? brl(precoPix(p.preco))+" no PIX" : "";
+  $("#mPor").innerHTML = temPreco(p) ? `${brl(p.preco)} <small>/${esc(p.unidade)}</small>` : `<span class="consulta">Preço sob consulta</span>`;
+  $("#mPix").textContent = temPreco(p) && temPix() ? brl(precoPix(p.preco))+" no PIX" : "";
   $("#mDesc").textContent = p.descricao||""; $("#mDesc").hidden = !p.descricao;
   $("#mQtd").value = 1; abre("#modalProd");
 }
@@ -640,22 +645,24 @@ try{ orc = JSON.parse(localStorage.getItem("scx-orc")||"{}")||{}; }catch(e){ orc
 const salva = ()=>{ try{ localStorage.setItem("scx-orc", JSON.stringify(orc)); }catch(e){} };
 const itensOrc = () => Object.entries(orc).map(([id,q])=>({p:produtos.find(x=>String(x.id)===id), q})).filter(x=>x.p);
 const soma = () => itensOrc().reduce((t,x)=>t+x.p.preco*x.q,0);
+const semPrecoNoOrc = () => itensOrc().some(x=>!temPreco(x.p));
 function add(id, q, btn){
   orc[id]=(orc[id]||0)+q; salva(); atualizaOrc();
   $("#oOk").hidden = true; $("#formOrc").hidden = false;
-  if(btn && btn.classList.contains("add")){ btn.classList.add("ok"); btn.textContent="Adicionado ✓"; setTimeout(()=>{btn.classList.remove("ok");btn.textContent="Adicionar";},1200); }
+  if(btn && btn.classList.contains("add")){ btn.classList.add("ok"); const t0=btn.textContent; btn.textContent="Adicionado ✓"; setTimeout(()=>{btn.classList.remove("ok");btn.textContent=t0;},1200); }
 }
 function atualizaOrc(){
   const its = itensOrc();
   $("#qt").textContent = its.reduce((a,x)=>a+x.q,0);
-  $("#itens").innerHTML = its.length ? its.map(({p,q})=>`<div class="it"><b>${esc(p.nome)}</b><span class="sub num">${brl(p.preco*q)}</span>
-      <div class="qtd"><button type="button" data-q="${esc(p.id)}" data-d="-1" aria-label="Diminuir">−</button><span class="num">${q}</span><button type="button" data-q="${esc(p.id)}" data-d="1" aria-label="Aumentar">+</button><small style="color:var(--muted)">${brl(p.preco)}/${esc(p.unidade)}</small></div>
+  $("#itens").innerHTML = its.length ? its.map(({p,q})=>`<div class="it"><b>${esc(p.nome)}</b><span class="sub num">${temPreco(p)?brl(p.preco*q):"a consultar"}</span>
+      <div class="qtd"><button type="button" data-q="${esc(p.id)}" data-d="-1" aria-label="Diminuir">−</button><span class="num">${q}</span><button type="button" data-q="${esc(p.id)}" data-d="1" aria-label="Aumentar">+</button><small style="color:var(--muted)">${temPreco(p)?brl(p.preco)+"/":"por "}${esc(p.unidade)}</small></div>
       <button class="rm" type="button" data-rm="${esc(p.id)}">Remover</button></div>`).join("")
     : `<p class="vazio">Seu orçamento está vazio.<br>Adicione produtos da vitrine.</p>`;
   $("#orcResumo").hidden = !its.length;
   if($("#oOk").hidden) $("#formOrc").hidden = !its.length;
-  $("#total").textContent = brl(soma());
-  $("#totPix").textContent = temPix() ? `No PIX: ${brl(precoPix(soma()))}` : "";
+  const nada = soma()<=0, parcial = !nada && semPrecoNoOrc();
+  $("#total").textContent = nada ? "A consultar" : brl(soma()) + (parcial ? " +" : "");
+  $("#totPix").textContent = nada ? "Enviamos os valores pelo WhatsApp." : (parcial ? "+ itens com preço a consultar. " : "") + (temPix() ? `No PIX: ${brl(precoPix(soma()))}` : "");
 }
 $("#itens").addEventListener("click", e=>{
   const q=e.target.closest("[data-q]"), r=e.target.closest("[data-rm]");
@@ -709,7 +716,7 @@ $("#formOrc").addEventListener("submit", async e=>{
   const its = itensOrc(); if(!its.length) return;
   const cod = codigoPedido();
   const E = usarEmoji(), ic = (e, t) => E ? `${e} ${t}` : t, sep = E ? null : `------------------------------`;
-  const linhas = its.map(({p,q})=>`${E?"▪️":"•"} ${q}x ${p.nome} (${p.unidade}) - ${brl(p.preco*q)}`);
+  const linhas = its.map(({p,q})=>`${E?"▪️":"•"} ${q}x ${p.nome} (${p.unidade}) - ${temPreco(p)?brl(p.preco*q):"preço a consultar"}`);
   const msg = [
     ic("🛒", `*NOVO PEDIDO DE ORÇAMENTO*`),
     ic("🌐", `_Pedido feito pelo site ${dominio()}_`),
@@ -727,8 +734,8 @@ $("#formOrc").addEventListener("submit", async e=>{
     ...linhas,
     ``,
     sep,
-    ic("💰", `*Total estimado:* ${brl(soma())}`),
-    temPix() ? ic("💠", `*No PIX:* ${brl(precoPix(soma()))}`) : null,
+    ic("💰", soma()<=0 ? `*Total:* a consultar` : `*Total estimado:* ${brl(soma())}${semPrecoNoOrc()?" + itens a consultar":""}`),
+    temPix() && soma()>0 ? ic("💠", `*No PIX:* ${brl(precoPix(soma()))}`) : null,
     ``,
     `_Aguardo a confirmação de preço, estoque e entrega._`
   ].filter(l=>l!==null).join("\n");

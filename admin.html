@@ -829,7 +829,7 @@ async function pgProdutos(el){
       <span class="esp"></span>
       <button class="btn prim" type="button" id="novoProd">+ Novo produto</button>
     </div>
-    <div class="info-caixa" style="font-size:14px">Dica: altere o <b>preço</b> direto na tabela e aperte Enter (ou clique fora) para salvar. <b>Oferta</b> coloca o produto na vitrine “Ofertas da semana”.</div>
+    <div class="info-caixa" style="font-size:14px">Dica: altere o <b>preço</b> direto na tabela e aperte Enter (ou clique fora) para salvar. Preço <b>0</b> aparece no site como “Preço sob consulta”. <b>Oferta</b> coloca o produto na vitrine “Ofertas da semana”.</div>
     <div class="tabela"><table><thead><tr><th></th><th>Produto</th><th>Departamento</th><th class="dir">Preço (R$)</th><th class="dir">Preço “de” (R$)</th><th>Oferta</th><th>No site</th><th></th></tr></thead><tbody id="pCorpo"></tbody></table></div>
     <p style="color:var(--muted);font-size:13px;margin:0" id="pConta"></p>`;
   $("#pBusca").value = filtroProd.busca; $("#pCat").value = filtroProd.cat;
@@ -861,7 +861,8 @@ async function pgProdutos(el){
     const inp = e.target.closest("[data-campo]"); if(!inp) return;
     const id = +inp.closest("tr").dataset.id, campo = inp.dataset.campo, p = prods.find(x=>x.id===id);
     let valor = inp.type==="checkbox" ? inp.checked : numBR(inp.value);
-    if(campo==="preco" && (valor==null || isNaN(valor))){ toast("Preço inválido. Use o formato 36,90.", true); inp.value=fmtNum(p.preco); return; }
+    if(campo==="preco" && valor==null) valor = 0;
+    if(campo==="preco" && isNaN(valor)){ toast("Preço inválido. Use o formato 36,90.", true); inp.value=fmtNum(p.preco); return; }
     if(campo==="preco_de" && isNaN(valor)){ toast("Preço inválido. Use o formato 42,90.", true); inp.value=fmtNum(p.preco_de); return; }
     const { error } = await sb.from("produtos").update({ [campo]: valor }).eq("id", id);
     if(error){ falha(error,"Erro ao salvar"); if(inp.type==="checkbox") inp.checked=!inp.checked; else inp.value=fmtNum(p[campo]); return; }
@@ -880,7 +881,7 @@ function editarProduto(p, aoSalvar){
       <div class="campo"><span class="rot">&nbsp;</span><div style="display:flex;gap:16px;flex-wrap:wrap;padding-top:6px"><label class="chk"><input type="checkbox" id="eDest"> Oferta</label><label class="chk"><input type="checkbox" id="eAtivo"> No site</label></div></div>
     </div>
     <div class="grade2">
-      <div class="campo"><label for="ePreco">Preço (R$)</label><input type="text" inputmode="decimal" id="ePreco" placeholder="36,90"></div>
+      <div class="campo"><label for="ePreco">Preço (R$)</label><input type="text" inputmode="decimal" id="ePreco" placeholder="36,90"><small>Deixe 0 (ou vazio) para mostrar “Preço sob consulta”.</small></div>
       <div class="campo"><label for="eDe">Preço “de” (R$) — opcional</label><input type="text" inputmode="decimal" id="eDe" placeholder="42,90"><small>Mostra o preço riscado e o selo de desconto.</small></div>
     </div>
     <div class="campo"><label for="eDesc">Descrição (opcional)</label><textarea id="eDesc" maxlength="1500" placeholder="Marca, medidas, rendimento, cor..."></textarea></div>
@@ -891,7 +892,7 @@ function editarProduto(p, aoSalvar){
   const foto = campoImagem($("#eFoto"), urlSegura(p.foto_url), { pasta:"produtos", maxW:1000, maxH:1000, dica:"Foto quadrada ou 4:3, fundo claro" });
   $("[data-canc]",d.el).onclick = d.fechar;
   $("[data-ok]",d.el).onclick = async e => {
-    const nome=$("#eNome").value.trim(), preco=numBR($("#ePreco").value), de=numBR($("#eDe").value);
+    const nome=$("#eNome").value.trim(), preco=numBR($("#ePreco").value)??0, de=numBR($("#eDe").value);
     if(nome.length<2) return toast("Informe o nome do produto.", true);
     if(preco==null || isNaN(preco)) return toast("Informe um preço válido, por exemplo 36,90.", true);
     if(isNaN(de)) return toast("O preço “de” está inválido.", true);

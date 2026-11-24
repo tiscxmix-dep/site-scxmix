@@ -9,6 +9,6 @@
    de exemplo e o painel avisa que falta configurar.
    ========================================================= */
 window.SCX_CONFIG = {
-  supabaseUrl: "https://yoexkkgnwllxlodgjasa.supabase.co",
-  supabaseAnonKey: "sb_publishable_vuiY9ZWGi_7jXaclbwUMGQ_7gJv_bde"
+  supabaseUrl: "",
+  supabaseAnonKey: ""
 };
